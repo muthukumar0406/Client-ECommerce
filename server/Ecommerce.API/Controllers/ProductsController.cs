@@ -34,40 +34,30 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] Ecommerce.Application.DTOs.CreateProductDto productDto)
+        public async Task<IActionResult> Create([FromForm] DTOs.ProductRequest productRequest)
         {
-            // Manual mapping to ProductDto for service
             var pDto = new ProductDto
             {
-                Name = productDto.Name,
-                Description = productDto.Description,
-                Price = productDto.Price,
-                DiscountPrice = productDto.DiscountPrice,
-                StockQuantity = productDto.StockQuantity,
-                Sku = productDto.Sku,
-                CategoryId = productDto.CategoryId,
-                SubCategoryId = productDto.SubCategoryId
+                Name = productRequest.Name,
+                Description = productRequest.Description,
+                Price = productRequest.Price,
+                DiscountPrice = productRequest.DiscountPrice,
+                StockQuantity = productRequest.StockQuantity,
+                Sku = productRequest.Sku,
+                CategoryId = productRequest.CategoryId,
+                SubCategoryId = productRequest.SubCategoryId
             };
 
-            // Handle Image Upload
-            if (productDto.Image != null && productDto.Image.Length > 0)
+            if (productRequest.Image != null && productRequest.Image.Length > 0)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(productDto.Image.FileName);
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(productRequest.Image.FileName);
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "images/products");
-                
                 if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-                
                 var filePath = Path.Combine(uploadsFolder, fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await productDto.Image.CopyToAsync(stream);
+                    await productRequest.Image.CopyToAsync(stream);
                 }
-
-                // Assuming the server is accessed via IP/domain, we construct a relative or absolute URL
-                // For Docker/Localhost consistency, we store relative path and let frontend prepend host or return full URL if hostname known
-                // Let's store full URL for simplicity if we can, or just relative.
-                // ideally: "/images/products/filename.jpg". Frontend prepends API base URL if needed, or we return full.
-                
                 var displayUrl = $"http://160.187.68.165:5001/images/products/{fileName}";
                 pDto.ImageUrls = new List<string> { displayUrl };
             }
@@ -77,43 +67,35 @@
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] Ecommerce.Application.DTOs.CreateProductDto productDto)
+        public async Task<IActionResult> Update(int id, [FromForm] DTOs.ProductRequest productRequest)
         {
-            // NOTE: For update with file, typically we'd use a different DTO or same. 
-            // In Angular, if we send FormData, we need to receive it here.
-            // If ID matches...
-             
-            // Map to ProductDto
              var pDto = new ProductDto
             {
                 Id = id,
-                Name = productDto.Name,
-                Description = productDto.Description,
-                Price = productDto.Price,
-                DiscountPrice = productDto.DiscountPrice,
-                StockQuantity = productDto.StockQuantity,
-                CategoryId = productDto.CategoryId,
-                SubCategoryId = productDto.SubCategoryId
+                Name = productRequest.Name,
+                Description = productRequest.Description,
+                Price = productRequest.Price,
+                DiscountPrice = productRequest.DiscountPrice,
+                StockQuantity = productRequest.StockQuantity,
+                CategoryId = productRequest.CategoryId,
+                SubCategoryId = productRequest.SubCategoryId
             };
 
-            if (productDto.Image != null && productDto.Image.Length > 0)
+            if (productRequest.Image != null && productRequest.Image.Length > 0)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(productDto.Image.FileName);
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(productRequest.Image.FileName);
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "images/products");
                 if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
                 var filePath = Path.Combine(uploadsFolder, fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await productDto.Image.CopyToAsync(stream);
+                    await productRequest.Image.CopyToAsync(stream);
                 }
                 var displayUrl = $"http://160.187.68.165:5001/images/products/{fileName}";
                 pDto.ImageUrls = new List<string> { displayUrl };
             }
             else 
             {
-                 // Keep existing images? Service needs logic for this. 
-                 // Current simple service overwrites if list is passed? 
-                 // We might need to fetch existing to keep images if no new one provided.
                  var existing = await _productService.GetProductByIdAsync(id);
                  if(existing != null) pDto.ImageUrls = existing.ImageUrls;
             }

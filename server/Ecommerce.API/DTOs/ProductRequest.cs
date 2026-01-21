@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 
-namespace Ecommerce.Application.DTOs
+namespace Ecommerce.API.DTOs
 {
-    public class CreateProductDto
+    public class ProductRequest
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
@@ -14,5 +13,6 @@ namespace Ecommerce.Application.DTOs
         public int CategoryId { get; set; }
         public int? SubCategoryId { get; set; }
         public IFormFile? Image { get; set; }
+        public int? Id { get; set; } // For Update
     }
 }
