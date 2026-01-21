@@ -1,0 +1,39 @@
+using Ecommerce.Application.DTOs;
+using Ecommerce.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Ecommerce.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrdersController : ControllerBase
+    {
+        private readonly IOrderService _orderService;
+
+        public OrdersController(IOrderService orderService)
+        {
+            _orderService = orderService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateOrderDto orderDto)
+        {
+            var result = await _orderService.CreateOrderAsync(orderDto);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            return Ok(orders);
+        }
+
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
+        {
+            await _orderService.UpdateOrderStatusAsync(id, status);
+            return NoContent();
+        }
+    }
+}
