@@ -80,7 +80,7 @@ import { FormsModule } from '@angular/forms';
                             <span>{{ item.quantity }}</span>
                             <button (click)="updateQty(item.product.id, 1)">+</button>
                           </div>
-                          <p class="price">₹{{ (item.product.price * item.quantity) | number }}</p>
+                          <p class="price">₹{{ ((item.product.discountPrice || item.product.price) * item.quantity) | number }}</p>
                       </div>
                     </div>
                     <button class="remove-btn" (click)="remove(item.product.id)"><i class="fas fa-trash"></i></button>

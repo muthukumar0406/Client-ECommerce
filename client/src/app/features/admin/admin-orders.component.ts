@@ -20,7 +20,7 @@ import { OrderService, Order } from '../../core/services/order.service';
                 <div class="order-header">
                     <div>
                         <span class="order-id">#{{order.orderNumber || order.id}}</span>
-                        <span class="order-date">{{order.createdDate | date:'medium'}}</span>
+                        <span class="order-date">{{order.orderDate | date:'medium'}}</span>
                     </div>
                     <span class="status-badge" [class.pending]="true">{{order.status || 'Pending'}}</span>
                 </div>
@@ -54,7 +54,7 @@ import { OrderService, Order } from '../../core/services/order.service';
                                 <tr>
                                     <td>{{item.productName}}</td>
                                     <td>{{item.quantity}}</td>
-                                    <td>₹{{item.totalPrice}}</td>
+                                    <td>₹{{item.unitPrice * item.quantity}}</td>
                                 </tr>
                             }
                         </tbody>

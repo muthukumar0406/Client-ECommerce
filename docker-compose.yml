@@ -22,6 +22,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - db
+    volumes:
+      - product-images:/app/wwwroot/images/products
     networks:
       - ecommerce-network
 
@@ -39,3 +41,6 @@ services:
 networks:
   ecommerce-network:
     driver: bridge
+
+volumes:
+  product-images:

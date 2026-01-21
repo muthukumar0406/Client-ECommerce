@@ -13,7 +13,10 @@ export class CartService {
     cartItems = signal<CartItem[]>([]);
 
     totalItems = computed(() => this.cartItems().reduce((acc, item) => acc + item.quantity, 0));
-    totalPrice = computed(() => this.cartItems().reduce((acc, item) => acc + (item.product.price * item.quantity), 0));
+    totalPrice = computed(() => this.cartItems().reduce((acc, item) => {
+        const price = item.product.discountPrice && item.product.discountPrice > 0 ? item.product.discountPrice : item.product.price;
+        return acc + (price * item.quantity);
+    }, 0));
 
     constructor(private productService: ProductService) {
         // Load from local storage

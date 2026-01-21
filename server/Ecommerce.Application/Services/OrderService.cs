@@ -83,6 +83,11 @@ namespace Ecommerce.Application.Services
         public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
         {
             var orders = await _orderRepository.GetAllAsync(o => o.Address, o => o.OrderItems);
+            // We need to ensure Product is included in OrderItems for names
+            // Since our generic repository might not support deep includes nested like o => o.OrderItems.Select(i => i.Product)
+            // We'll fetch products separately or use a more advanced repository if needed.
+            // For now, let's fetch all products and map.
+            var products = await _productRepository.GetAllAsync();
             
             return orders.Select(o => new OrderDto
             {
@@ -105,7 +110,7 @@ namespace Ecommerce.Application.Services
                 Items = o.OrderItems.Select(i => new OrderItemDto 
                 { 
                     ProductId = i.ProductId,
-                    ProductName = "Product " + i.ProductId, 
+                    ProductName = products.FirstOrDefault(p => p.Id == i.ProductId)?.Name ?? "Product " + i.ProductId, 
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice
                 }).ToList()

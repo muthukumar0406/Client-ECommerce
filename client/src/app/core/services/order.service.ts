@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface OrderItem {
     id: number;
+    productId: number;
     productName: string;
     quantity: number;
     unitPrice: number;
@@ -26,7 +27,7 @@ export interface Order {
     customerPhone: string;
     finalAmount: number;
     status: string;
-    createdDate: string;
+    orderDate: string; // Renamed to match backend DTO
     address: Address;
     items: OrderItem[];
 }
