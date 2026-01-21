@@ -16,18 +16,18 @@ namespace Ecommerce.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public IActionResult Login([FromBody] LoginRequest request)
         {
-            var admin = await _context.Admins.FirstOrDefaultAsync(a => 
-                a.Username == request.Username && a.PasswordHash == request.Password);
+            if (request.Username == "Muthukumar" && request.Password == "Admin@kumar")
+            {
+                return Ok(new { 
+                    Token = "fake-jwt-token-for-demo-admin", 
+                    Username = "Muthukumar",
+                    FullName = "Administrator" 
+                });
+            }
             
-            if (admin == null) return Unauthorized("Invalid credentials");
-
-            return Ok(new { 
-                Token = "fake-jwt-token-for-demo", 
-                Username = admin.Username,
-                FullName = admin.FullName 
-            });
+            return Unauthorized("Invalid credentials");
         }
     }
 

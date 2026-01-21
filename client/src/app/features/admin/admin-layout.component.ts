@@ -1,170 +1,119 @@
-import { Component } from '@angular/core';
+import { Component, useEffect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
-    selector: 'app-admin-layout',
-    standalone: true,
-    imports: [CommonModule, RouterModule],
-    template: `
+  selector: 'app-admin-layout',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  template: `
     <div class="admin-wrapper">
-      <aside class="sidebar" [class.collapsed]="collapsed">
-        <div class="sidebar-header">
-          <h3>Admin<span class="dot">.</span></h3>
-          <button class="collapse-btn" (click)="toggleSidebar()">
-             <i class="fas fa-bars"></i>
-          </button>
+      <header class="admin-navbar glass-panel">
+        <div class="logo-area">
+            <h3>Admin<span class="highlight">Panel</span></h3>
         </div>
         
-        <nav class="sidebar-nav">
-          <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-            <i class="fas fa-th-large"></i> <span>Dashboard</span>
-          </a>
-          <a routerLink="/admin/products" routerLinkActive="active">
-            <i class="fas fa-box"></i> <span>Products</span>
-          </a>
-          <a routerLink="/admin/orders" routerLinkActive="active">
-            <i class="fas fa-shopping-cart"></i> <span>Orders</span>
-          </a>
-          <a routerLink="/admin/users" routerLinkActive="active">
-            <i class="fas fa-users"></i> <span>Users</span>
-          </a>
-          <a routerLink="/admin/settings" routerLinkActive="active">
-            <i class="fas fa-cog"></i> <span>Settings</span>
-          </a>
+        <nav class="admin-tabs">
+            <a routerLink="/admin/orders" routerLinkActive="active">
+                <i class="fas fa-list-alt"></i> Order Summary
+            </a>
+            <a routerLink="/admin/items" routerLinkActive="active">
+                <i class="fas fa-plus-circle"></i> Add / Manage Items
+            </a>
+            <a routerLink="/admin/categories" routerLinkActive="active">
+                <i class="fas fa-tags"></i> Manage Categories
+            </a>
         </nav>
-
-        <div class="sidebar-footer">
-          <a routerLink="/" class="logout-btn">
-             <i class="fas fa-sign-out-alt"></i> <span>Exit</span>
-          </a>
+        
+        <div class="actions">
+            <button class="logout-btn" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
         </div>
-      </aside>
-
-      <main class="admin-content">
-        <router-outlet></router-outlet>
+      </header>
+      
+      <main class="admin-content container">
+         <router-outlet></router-outlet>
       </main>
     </div>
   `,
-    styles: [`
+  styles: [`
     .admin-wrapper {
-      display: flex;
       min-height: 100vh;
-      background-color: #f1f5f9;
+      background-color: #f8fafc;
     }
 
-    .sidebar {
-      width: 260px;
-      background: white;
-      border-right: 1px solid rgba(0,0,0,0.05);
+    .admin-navbar {
       display: flex;
-      flex-direction: column;
-      transition: width 0.3s ease;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      z-index: 100;
-    }
-
-    .sidebar.collapsed {
-      width: 80px;
-    }
-    
-    .sidebar.collapsed span:not(.dot) {
-      display: none;
-    }
-    
-    .sidebar.collapsed .sidebar-header h3 {
-      display: none;
-    }
-    
-    .sidebar-header {
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      height: 80px;
-    }
-    
-    .sidebar-header h3 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin: 0;
-    }
-    
-    .dot { color: var(--primary-color); }
-
-    .collapse-btn {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .sidebar-nav {
-      flex: 1;
-      padding: 1rem 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .sidebar-nav a {
-      display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem 1.5rem;
-      color: var(--text-muted);
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    .sidebar-nav a:hover {
-      background-color: rgba(99, 102, 241, 0.05);
-      color: var(--primary-color);
+      padding: 1rem 2rem;
+      background: white;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
     
-    .sidebar-nav a.active {
-      background-color: rgba(99, 102, 241, 0.1);
-      color: var(--primary-color);
-      border-right: 3px solid var(--primary-color);
+    .logo-area h3 { margin: 0; font-size: 1.5rem; color: var(--text-main); }
+    .highlight { color: var(--primary-color); }
+    
+    .admin-tabs {
+        display: flex;
+        gap: 1rem;
     }
     
-    .sidebar-nav a i {
-      width: 20px;
-      text-align: center;
-      font-size: 1.1rem;
+    .admin-tabs a {
+        padding: 0.8rem 1.5rem;
+        border-radius: 30px;
+        color: var(--text-muted);
+        font-weight: 500;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
-
-    .sidebar-footer {
-      padding: 1rem;
-      border-top: 1px solid rgba(0,0,0,0.05);
+    
+    .admin-tabs a:hover {
+        background: rgba(99, 102, 241, 0.05);
+        color: var(--primary-color);
+    }
+    
+    .admin-tabs a.active {
+        background: var(--primary-color);
+        color: white;
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
     }
     
     .logout-btn {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.8rem;
-      color: var(--danger-color);
-      font-weight: 600;
-      cursor: pointer;
+        background: none;
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: flex; align-items: center; gap: 0.5rem;
     }
-
+    .logout-btn:hover { background: var(--danger-color); color: white; }
+    
     .admin-content {
-      flex: 1;
-      padding: 2rem;
-      background: var(--bg-color);
-      overflow-y: auto;
+        padding-bottom: 2rem;
     }
   `]
 })
 export class AdminLayoutComponent {
-    collapsed = false;
+  private router = inject(Router);
 
-    toggleSidebar() {
-        this.collapsed = !this.collapsed;
+  constructor() {
+    // Simple auth check
+    if (!localStorage.getItem('adminToken')) {
+      this.router.navigate(['/admin/login']);
     }
+  }
+
+  logout() {
+    localStorage.removeItem('adminToken');
+    this.router.navigate(['/']); // Go to home
+  }
 }

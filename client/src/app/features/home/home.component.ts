@@ -1,217 +1,352 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { ProductService, Product } from '../../core/services/product.service';
+import { CartService } from '../../core/services/cart.service';
+import { CategoryService, Category } from '../../core/services/category.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   template: `
     <div class="home-container">
-      <!-- Hero Section -->
-      <header class="hero glass-panel">
-        <div class="hero-content">
-            <h1>Experience the Future of <span class="highlight">Shopping</span></h1>
-            <p>Discover premium collections, curated just for you. Quality meets innovation in every product.</p>
-            <div class="hero-actions">
-                <a routerLink="/products" class="btn btn-primary btn-lg">Shop Now</a>
-                <a routerLink="/about" class="btn btn-outline btn-lg">Learn More</a>
-            </div>
-        </div>
-        <div class="hero-visual">
-            <div class="floating-card c1"></div>
-            <div class="floating-card c2"></div>
-            <div class="floating-card c3"></div>
-        </div>
-      </header>
-      
-      <!-- Categories -->
-      <section class="container section">
-        <h2 class="section-title">Explore Categories</h2>
-        <div class="grid categories-grid">
-          <div class="category-card glass-panel" routerLink="/products">
-            <div class="icon-box"><i class="fas fa-mobile-alt"></i></div>
-            <h3>Electronics</h3>
-            <p>Latest gadgets & tech</p>
-          </div>
-          <div class="category-card glass-panel" routerLink="/products">
-            <div class="icon-box"><i class="fas fa-tshirt"></i></div>
-            <h3>Fashion</h3>
-            <p>Trendsetting styles</p>
-          </div>
-          <div class="category-card glass-panel" routerLink="/products">
-            <div class="icon-box"><i class="fas fa-couch"></i></div>
-            <h3>Home & Living</h3>
-            <p>Elevate your space</p>
-          </div>
-          <div class="category-card glass-panel" routerLink="/products">
-            <div class="icon-box"><i class="fas fa-gem"></i></div>
-            <h3>Luxury</h3>
-            <p>Exquisite finds</p>
-          </div>
+    
+      <!-- 2. Company Info Section -->
+      <section class="company-info container">
+        <div class="info-card glass-panel">
+           <div class="brand-info">
+              <div class="brand-logo">MK</div>
+              <div class="brand-text">
+                  <h2>About MK Demo</h2>
+                  <p>Premium quality honey, nuts & dairy products</p>
+              </div>
+           </div>
+           <div class="contact-info">
+              <div class="contact-item"><i class="fas fa-phone-alt"></i> 9876543210</div>
+              <div class="contact-item"><i class="fas fa-envelope"></i> contact&#64;mkdemo.com</div>
+              <div class="contact-item"><i class="fas fa-map-marker-alt"></i> 123, Main Street, City</div>
+           </div>
         </div>
       </section>
 
-      <!-- Featured -->
-      <section class="container section">
-        <div class="section-header">
-            <h2 class="section-title">Trending Now</h2>
-            <a routerLink="/products" class="see-all">View All <i class="fas fa-arrow-right"></i></a>
-        </div>
-        
-        <div class="product-scroller">
-           @for (item of [1,2,3,4,5]; track item) {
-             <div class="product-item glass-panel" routerLink="/products">
-                <div class="prod-image"></div>
-                <div class="prod-info">
-                    <p class="name">Premium Item {{item}}</p>
-                    <p class="price">₹{{ 1000 * item | number }}</p>
+      <!-- 3. Search Bar -->
+      <section class="search-section container">
+         <div class="search-bar glass-panel">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" 
+                   placeholder="Search items..." 
+                   [(ngModel)]="searchQuery" 
+                   (ngModelChange)="filterProducts()">
+         </div>
+      </section>
+
+      <!-- 4. Category Tabs -->
+      <section class="category-tabs container">
+         <div class="tabs-scroll">
+            <button class="tab-btn" 
+                    [class.active]="selectedCategory() === 'All'" 
+                    (click)="selectCategory('All')">All</button>
+            @for (cat of categories(); track cat.id) {
+                <button class="tab-btn" 
+                        [class.active]="selectedCategory() === cat.name" 
+                        (click)="selectCategory(cat.name)">{{cat.name}}</button>
+            }
+         </div>
+      </section>
+
+      <!-- 5. Product List -->
+      <section class="product-list container">
+         <div class="grid">
+            @for (prod of filteredProducts(); track prod.id) {
+               <div class="product-card glass-panel">
+                  <div class="img-box">
+                      <img [src]="prod.imageUrls?.[0] || 'assets/placeholder.png'" [alt]="prod.name" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                  </div>
+                  <div class="details">
+                      <h3>{{prod.name}}</h3>
+                      <div class="price-block">
+                          <span class="original-price" *ngIf="prod.discountPrice && prod.price > prod.discountPrice">₹{{prod.price}}</span>
+                          <span class="final-price">₹{{prod.discountPrice || prod.price}}</span>
+                      </div>
+                      
+                      <!-- Add Button / Quantity Controls -->
+                      <div class="actions">
+                          @if (prod.stockQuantity <= 0) {
+                              <button class="add-btn" disabled style="opacity: 0.5; cursor: not-allowed; background: #eee; border-color: #ddd; color: #999;">Out of Stock</button>
+                          } @else if (getQuantity(prod.id) === 0) {
+                              <button class="add-btn" (click)="increment(prod)">ADD</button>
+                          } @else {
+                              <div class="qty-control">
+                                  <button (click)="decrement(prod)">-</button>
+                                  <span>{{getQuantity(prod.id)}}</span>
+                                  <button (click)="increment(prod)">+</button>
+                              </div>
+                          }
+                      </div>
+                  </div>
+               </div>
+            } @empty {
+                <div class="empty-state">
+                   <p>No products found matching your criteria.</p>
                 </div>
+            }
+         </div>
+      </section>
+
+      <!-- 7. Bottom Cart Bar (Sticky) -->
+      @if (cartTotalItems() > 0) {
+          <div class="cart-bar">
+             <div class="cart-info">
+                <span class="count">{{cartTotalItems()}} Items</span>
+                <span class="divider">|</span>
+                <span class="total">₹{{cartTotalPrice() | number}}</span>
              </div>
-           }
-        </div>
-      </section>
-      
-      <!-- Newsletter -->
-      <section class="container section newsletter">
-        <div class="glass-panel newsletter-box">
-            <h2>Join Our Exclusive Club</h2>
-            <p>Get early access to new drops and special offers.</p>
-            <div class="input-group">
-                <input type="email" placeholder="Enter your email">
-                <button class="btn btn-primary">Subscribe</button>
-            </div>
-        </div>
-      </section>
+             <button class="view-cart-btn" routerLink="/cart">
+                View Cart <i class="fas fa-chevron-right"></i>
+             </button>
+          </div>
+      }
     </div>
   `,
   styles: [`
-    .home-container { padding-bottom: 4rem; }
+    .home-container { padding-bottom: 80px; } /* Space for cart bar */
+    .glass-panel {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
     
-    /* Hero */
-    .hero {
-        margin: 2rem auto;
-        max-width: 1280px;
-        min-height: 500px;
-        padding: 4rem 2rem;
+    /* Company Info */
+    .company-info { margin-top: 1rem; }
+    .info-card {
+        padding: 1.5rem;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
-        overflow: hidden;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+        .info-card { flex-direction: row; justify-content: space-between; align-items: center; }
     }
     
-    .hero-content {
-        max-width: 600px;
-        z-index: 2;
-    }
-    
-    .hero h1 {
-        font-size: 3.5rem;
-        font-weight: 800;
-        line-height: 1.1;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, var(--text-main), var(--primary-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    
-    .highlight { color: var(--primary-color); }
-    
-    .hero p { font-size: 1.25rem; margin-bottom: 2.5rem; max-width: 450px; }
-    
-    .hero-actions { display: flex; gap: 1rem; }
-    .btn-lg { padding: 1rem 2rem; font-size: 1.1rem; }
-    
-    .hero-visual {
-        position: relative;
-        width: 500px;
-        height: 500px;
-        display: none;
-    }
-    @media (min-width: 900px) { .hero-visual { display: block; } }
-    
-    .floating-card {
-        position: absolute;
-        background: rgba(255,255,255,0.4);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.6);
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    }
-    .c1 { width: 200px; height: 260px; top: 50px; left: 100px; z-index: 3; background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2)); }
-    .c2 { width: 180px; height: 180px; bottom: 80px; left: 20px; z-index: 2; animation: float 6s ease-in-out infinite; }
-    .c3 { width: 150px; height: 150px; top: 20px; right: 50px; z-index: 1; animation: float 8s ease-in-out infinite reverse; }
-    
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-
-    /* Sections */
-    .section { margin-top: 5rem; }
-    .section-title { font-size: 2rem; margin-bottom: 2rem; font-weight: 700; }
-    
-    .categories-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-    
-    .category-card {
-        padding: 2rem;
-        text-align: center;
-        transition: transform 0.3s;
-        cursor: pointer;
-    }
-    .category-card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.9); }
-    
-    .icon-box {
-        width: 60px;
-        height: 60px;
-        background: rgba(99, 102, 241, 0.1);
-        color: var(--primary-color);
+    .brand-info { display: flex; gap: 1rem; align-items: center; }
+    .brand-logo {
+        width: 60px; height: 60px;
+        background: var(--primary-color);
+        color: white;
         border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: bold; font-size: 1.2rem;
+    }
+    .brand-text h2 { margin: 0; font-size: 1.2rem; }
+    .brand-text p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+    
+    .contact-info { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+    .contact-item i { width: 20px; color: var(--primary-color); }
+
+    /* Search Bar */
+    .search-section { margin-top: 1.5rem; }
+    .search-bar {
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin: 0 auto 1rem;
-    }
-    
-    /* Scroller */
-    .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
-    .see-all { font-weight: 600; color: var(--primary-color); }
-    
-    .product-scroller {
-        display: flex;
-        gap: 2rem;
-        overflow-x: auto;
-        padding: 1rem 0;
-        scroll-behavior: smooth;
-    }
-    
-    .product-item {
-        min-width: 250px;
-        padding: 1rem;
-        cursor: pointer;
-        transition: transform 0.3s;
-    }
-    .product-item:hover { transform: translateY(-5px); }
-    
-    .prod-image { height: 200px; background: rgba(0,0,0,0.03); border-radius: var(--radius-md); margin-bottom: 1rem; }
-    .prod-info .name { font-weight: 600; margin-bottom: 0.5rem; }
-    .prod-info .price { color: var(--primary-color); font-weight: 700; font-size: 1.1rem; }
-
-    /* Newsletter */
-    .newsletter-box {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.4));
-    }
-    .input-group {
-        display: flex;
-        justify-content: center;
+        padding: 0.8rem 1.2rem;
         gap: 1rem;
-        margin-top: 2rem;
-        max-width: 500px;
-        margin: 2rem auto 0;
-        flex-wrap: wrap;
     }
-    .input-group input { flex: 1; min-width: 200px; }
+    .search-input { width: 100%; border: none; outline: none; font-size: 1rem; }
+    .search-bar input { border: none; width: 100%; font-size: 1rem; outline: none; }
+    .search-icon { color: var(--text-muted); }
+
+    /* Category Tabs */
+    .category-tabs { margin-top: 1.5rem; overflow: hidden; }
+    .tabs-scroll {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        scrollbar-width: none;
+    }
+    .tabs-scroll::-webkit-scrollbar { display: none; }
+    
+    .tab-btn {
+        padding: 0.6rem 1.5rem;
+        border: none;
+        background: white;
+        border-radius: 20px;
+        font-weight: 500;
+        color: var(--text-muted);
+        cursor: pointer;
+        white-space: nowrap;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    .tab-btn.active {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.05);
+    }
+    
+    /* Product List */
+    .product-list { margin-top: 2rem; }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+    @media (min-width: 600px) {
+        .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+    }
+    
+    .product-card {
+        overflow: hidden;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .img-box {
+        height: 140px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    
+    .details h3 { font-size: 1rem; margin: 0; line-height: 1.3; height: 2.6rem; overflow: hidden; }
+    .price-block { display: flex; gap: 0.5rem; align-items: baseline; margin-top: 0.5rem; }
+    .original-price { text-decoration: line-through; color: var(--text-muted); font-size: 0.9rem; }
+    .final-price { font-weight: bold; font-size: 1.1rem; color: var(--primary-color); }
+    
+    .actions { margin-top: auto; }
+    .add-btn {
+        width: 100%;
+        padding: 0.6rem;
+        border: none;
+        background: white;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .add-btn:hover { background: var(--primary-color); color: white; }
+    
+    .qty-control {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 8px;
+        padding: 0.3rem;
+    }
+    .qty-control button {
+        background: none; border: none; color: white;
+        width: 30px; height: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer;
+    }
+    
+    /* Sticky Cart Bar */
+    .cart-bar {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: white;
+        padding: 1rem 1.5rem;
+        display: flex; justify-content: space-between; align-items: center;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+        z-index: 1000;
+        animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .cart-info { display: flex; align-items: center; gap: 0.8rem; font-weight: 600; font-size: 1.1rem; }
+    .view-cart-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 600;
+        display: flex; align-items: center; gap: 0.5rem;
+        cursor: pointer;
+    }
   `]
 })
-export class HomeComponent { }
+export class HomeComponent implements OnInit {
+  products = signal<Product[]>([]);
+  categories = signal<Category[]>([]);
+
+  selectedCategory = signal<string>('All');
+  searchQuery = '';
+
+  cartTotalItems = this.cartService.totalItems;
+  cartTotalPrice = this.cartService.totalPrice;
+
+  filteredProducts = computed(() => {
+    let items = this.products();
+    const cat = this.selectedCategory();
+    const query = this.searchQuery.toLowerCase();
+
+    if (cat !== 'All') {
+      // Assuming Product has category text or we match by ID. 
+      // In a real app we might map ID. For now let's hope logic matches or I will fix it.
+      // Wait, Product has categoryId. Service returns Categories with ID and Name.
+      // I should map properly.
+      const catObj = this.categories().find(c => c.name === cat);
+      if (catObj) {
+        items = items.filter(p => p.categoryId === catObj.id);
+      }
+    }
+
+    if (query) {
+      items = items.filter(p => p.name.toLowerCase().includes(query));
+    }
+
+    return items;
+  });
+
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService,
+    private categoryService: CategoryService
+  ) { }
+
+  ngOnInit() {
+    this.loadData();
+  }
+
+  loadData() {
+    this.productService.getProducts().subscribe(res => this.products.set(res));
+    this.categoryService.getCategories().subscribe(res => {
+      // We should ensure we have 'Honey', 'Nuts', 'Milk' if they aren't in DB yet?
+      // The user said "Categories auto-appear".
+      this.categories.set(res);
+    });
+
+    // Mock data if API is empty for visual check?
+    // Let's rely on API.
+  }
+
+  selectCategory(cat: string) {
+    this.selectedCategory.set(cat);
+  }
+
+  filterProducts() {
+    // Triggered by ngModelChange, handled by computed
+  }
+
+  getQuantity(productId: number): number {
+    const item = this.cartService.cartItems().find(i => i.product.id === productId);
+    return item ? item.quantity : 0;
+  }
+
+  increment(product: Product) {
+    this.cartService.addToCart(product);
+  }
+
+  decrement(product: Product) {
+    const current = this.getQuantity(product.id);
+    if (current > 0) {
+      this.cartService.updateQuantity(product.id, current - 1);
+    }
+  }
+}
