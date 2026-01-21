@@ -19,13 +19,13 @@ namespace Ecommerce.Application.Services
 
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
-            var products = await _productRepository.GetAllAsync();
+            var products = await _productRepository.GetAllAsync(p => p.Images);
             return products.Where(p => !p.IsDeleted).Select(p => MapToDto(p));
         }
 
         public async Task<ProductDto?> GetProductByIdAsync(int id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id, p => p.Images);
             return product != null ? MapToDto(product) : null;
         }
 
@@ -68,26 +68,42 @@ namespace Ecommerce.Application.Services
             var product = await _productRepository.GetByIdAsync(productDto.Id);
             if (product != null)
             {
-                product.Name = productDto.Name;
-                product.Description = productDto.Description;
-                product.Price = productDto.Price;
-                product.DiscountPrice = productDto.DiscountPrice;
-                product.StockQuantity = productDto.StockQuantity;
-                product.CategoryId = productDto.CategoryId;
-                product.SubCategoryId = productDto.SubCategoryId;
-                product.UpdatedAt = DateTime.UtcNow;
-
                 if (productDto.ImageUrls.Any())
                 {
-                    // For this simple implementation, if DTO has images, replace existing.
-                    product.Images.Clear();
-                    foreach (var url in productDto.ImageUrls)
+                    // Reload with images to clear them
+                    var productWithImages = await _productRepository.GetByIdAsync(productDto.Id, p => p.Images);
+                    if (productWithImages != null)
                     {
-                        product.Images.Add(new ProductImage { ImageUrl = url, ProductId = product.Id });
+                        productWithImages.Name = productDto.Name;
+                        productWithImages.Description = productDto.Description;
+                        productWithImages.Price = productDto.Price;
+                        productWithImages.DiscountPrice = productDto.DiscountPrice;
+                        productWithImages.StockQuantity = productDto.StockQuantity;
+                        productWithImages.CategoryId = productDto.CategoryId;
+                        productWithImages.SubCategoryId = productDto.SubCategoryId;
+                        productWithImages.UpdatedAt = DateTime.UtcNow;
+
+                        productWithImages.Images.Clear();
+                        foreach (var url in productDto.ImageUrls)
+                        {
+                            productWithImages.Images.Add(new ProductImage { ImageUrl = url, ProductId = productWithImages.Id });
+                        }
+                        _productRepository.Update(productWithImages);
                     }
                 }
+                else
+                {
+                    product.Name = productDto.Name;
+                    product.Description = productDto.Description;
+                    product.Price = productDto.Price;
+                    product.DiscountPrice = productDto.DiscountPrice;
+                    product.StockQuantity = productDto.StockQuantity;
+                    product.CategoryId = productDto.CategoryId;
+                    product.SubCategoryId = productDto.SubCategoryId;
+                    product.UpdatedAt = DateTime.UtcNow;
+                    _productRepository.Update(product);
+                }
 
-                _productRepository.Update(product);
                 await _productRepository.SaveChangesAsync();
             }
         }
