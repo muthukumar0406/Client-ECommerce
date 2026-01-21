@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Ecommerce.Domain.Entities;
 
 namespace Ecommerce.Application.Interfaces
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T> where T : BaseEntity
     {
         Task<T?> GetByIdAsync(int id);
         Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes);

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Ecommerce.Application.Interfaces;
+using Ecommerce.Domain.Entities;
 using Ecommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Infrastructure.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         protected readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -33,7 +34,7 @@ namespace Ecommerce.Infrastructure.Repositories
                 query = query.Include(include);
             }
             // BaseEntity has Id
-            return await query.FirstOrDefaultAsync(e => ((BaseEntity)(object)e).Id == id);
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
