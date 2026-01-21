@@ -1,3 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Ecommerce.Application.DTOs;
+using Ecommerce.Application.Interfaces;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Ecommerce.API.Controllers
+{
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
