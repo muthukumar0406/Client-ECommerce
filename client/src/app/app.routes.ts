@@ -1,3 +1,8 @@
+import { Routes } from '@angular/router';
+import { HomeComponent } from './features/home/home.component';
+import { MainLayoutComponent } from './core/components/main-layout.component';
+import { AdminLayoutComponent } from './features/admin/admin-layout.component';
+
 export const routes: Routes = [
     {
         path: '',

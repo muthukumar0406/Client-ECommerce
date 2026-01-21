@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-    selector: 'app-admin-login',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-admin-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div class="login-container">
       <div class="login-card glass-panel">
         <div class="header">
@@ -35,12 +35,12 @@ import { HttpClient } from '@angular/common/http';
         </form>
         
         <div class="credentials-hint">
-            <small>Use: Muthukumar / Admin@kumar</small>
+            <small>Use: Muthukumar / Admin&#64;kumar</small>
         </div>
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .login-container {
       height: 100vh;
       display: flex;
@@ -99,33 +99,33 @@ import { HttpClient } from '@angular/common/http';
   `]
 })
 export class AdminLoginComponent {
-    username = '';
-    password = '';
-    errorMessage = '';
-    loading = false;
+  username = '';
+  password = '';
+  errorMessage = '';
+  loading = false;
 
-    constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
-    login() {
-        this.loading = true;
-        this.errorMessage = '';
+  login() {
+    this.loading = true;
+    this.errorMessage = '';
 
-        // Quick frontend check as well to avoid roundtrip if obviously wrong (optional but good for UX)
-        // But we will hit the API as per good practice (even if we just modified it to be hardcoded)
+    // Quick frontend check as well to avoid roundtrip if obviously wrong (optional but good for UX)
+    // But we will hit the API as per good practice (even if we just modified it to be hardcoded)
 
-        this.http.post('http://160.187.68.165:5001/api/admin/login', {
-            username: this.username,
-            password: this.password
-        }).subscribe({
-            next: (res: any) => {
-                localStorage.setItem('adminToken', res.token);
-                this.router.navigate(['/admin']); // Redirect to dashboard
-                this.loading = false;
-            },
-            error: (err) => {
-                this.errorMessage = 'Invalid username or password';
-                this.loading = false;
-            }
-        });
-    }
+    this.http.post('http://160.187.68.165:5001/api/admin/login', {
+      username: this.username,
+      password: this.password
+    }).subscribe({
+      next: (res: any) => {
+        localStorage.setItem('adminToken', res.token);
+        this.router.navigate(['/admin']); // Redirect to dashboard
+        this.loading = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'Invalid username or password';
+        this.loading = false;
+      }
+    });
+  }
 }

@@ -35,7 +35,7 @@ import { OrderService, Order } from '../../core/services/order.service';
                     <div class="detail-row">
                         <i class="fas fa-map-marker-alt"></i> 
                         <span>
-                            {{order.address?.street}}, {{order.address?.city}}
+                            {{order.address.street}}, {{order.address.city}}
                         </span>
                     </div>
                 </div>

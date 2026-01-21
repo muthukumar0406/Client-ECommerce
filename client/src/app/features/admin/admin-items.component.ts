@@ -33,9 +33,7 @@ import { HttpClient } from '@angular/common/http';
             <tbody>
                 @for (prod of products(); track prod.id) {
                     <tr>
-                        <td>
-                            <img [src]="prod.imageUrls?.[0] || 'assets/placeholder.png'" class="table-img">
-                        </td>
+                            <img [src]="prod.imageUrls[0] || 'assets/placeholder.png'" class="table-img">
                         <td>{{prod.name}}</td>
                         <td>{{getCategoryName(prod.categoryId)}}</td>
                         <td>

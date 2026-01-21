@@ -62,7 +62,7 @@ import { FormsModule } from '@angular/forms';
             @for (prod of filteredProducts(); track prod.id) {
                <div class="product-card glass-panel">
                   <div class="img-box">
-                      <img [src]="prod.imageUrls?.[0] || 'assets/placeholder.png'" [alt]="prod.name" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                      <img [src]="prod.imageUrls[0] || 'assets/placeholder.png'" [alt]="prod.name" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
                   </div>
                   <div class="details">
                       <h3>{{prod.name}}</h3>
