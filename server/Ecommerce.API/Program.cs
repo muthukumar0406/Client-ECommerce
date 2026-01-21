@@ -59,7 +59,8 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
+        // context.Database.Migrate(); // Migrations folder missing
+        context.Database.EnsureCreated(); // Creates schema if not exists
     }
     catch (Exception ex)
     {
