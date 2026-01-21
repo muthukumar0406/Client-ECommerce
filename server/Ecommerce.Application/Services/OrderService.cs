@@ -11,86 +11,50 @@ namespace Ecommerce.Application.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<Product> _productRepository;
+        private readonly Ecommerce.Infrastructure.Data.ApplicationDbContext _context;
 
-        public OrderService(IRepository<Order> orderRepository, IRepository<Product> productRepository)
+        public OrderService(IRepository<Order> orderRepository, IRepository<Product> productRepository, Ecommerce.Infrastructure.Data.ApplicationDbContext context)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _context = context;
         }
 
-        public async Task<OrderDto> CreateOrderAsync(CreateOrderDto createOrderDto)
-        {
-            var order = new Order
-            {
-                OrderNumber = "ORD-" + Guid.NewGuid().ToString().ToUpper().Substring(0, 8),
-                CustomerEmail = createOrderDto.CustomerEmail,
-                CustomerName = createOrderDto.CustomerName,
-                CustomerPhone = createOrderDto.CustomerPhone,
-                Status = OrderStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                Address = new Address
-                {
-                    Street = createOrderDto.ShippingAddress.Street,
-                    City = createOrderDto.ShippingAddress.City,
-                    State = createOrderDto.ShippingAddress.State,
-                    ZipCode = createOrderDto.ShippingAddress.ZipCode,
-                    Country = createOrderDto.ShippingAddress.Country
-                }
-            };
-
-            decimal total = 0;
-            foreach (var item in createOrderDto.Items)
-            {
-                var product = await _productRepository.GetByIdAsync(item.ProductId);
-                if (product != null)
-                {
-                    var unitPrice = product.DiscountPrice ?? product.Price;
-                    var itemTotal = unitPrice * item.Quantity;
-                    total += itemTotal;
-
-                    order.OrderItems.Add(new OrderItem
-                    {
-                        ProductId = product.Id,
-                        Quantity = item.Quantity,
-                        UnitPrice = unitPrice,
-                        TotalPrice = itemTotal
-                    });
-
-                    // Update stock
-                    product.StockQuantity -= item.Quantity;
-                    _productRepository.Update(product);
-                }
-            }
-
-            order.TotalAmount = total;
-            order.FinalAmount = total; // Simplified for demo
-
-            await _orderRepository.AddAsync(order);
-            await _orderRepository.SaveChangesAsync();
-
-            return new OrderDto
-            {
-                Id = order.Id,
-                OrderNumber = order.OrderNumber,
-                FinalAmount = order.FinalAmount,
-                Status = order.Status.ToString(),
-                OrderDate = order.CreatedAt
-            };
-        }
+        // ... CreateOrderAsync ...
 
         public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
         {
-            var orders = await _orderRepository.GetAllAsync();
-            return orders.Select(o => new OrderDto
+            // Use _context directly to Include related entities
+            var orders = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync(
+                Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include(
+                    _context.Orders.Include("Address").Include("OrderItems"), "Address")
+            );
+             
+            // Proper EF Core Include syntax:
+            var fullOrders = await _context.Orders
+                .Include(o => o.Address)
+                .Include(o => o.OrderItems)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            return fullOrders.Select(o => new OrderDto
             {
                 Id = o.Id,
                 OrderNumber = o.OrderNumber,
                 CustomerName = o.CustomerName,
+                CustomerPhone = o.CustomerPhone,
+                CustomerEmail = o.CustomerEmail,
                 FinalAmount = o.FinalAmount,
                 Status = o.Status.ToString(),
-                OrderDate = o.CreatedAt
+                OrderDate = o.CreatedAt,
+                // Check for null address just in case
+                Items = o.OrderItems.Select(i => new OrderItemDto 
+                { 
+                    ProductId = i.ProductId,
+                    ProductName = "Product " + i.ProductId, // Ideally join product or store name in OrderItem
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
             });
         }
 

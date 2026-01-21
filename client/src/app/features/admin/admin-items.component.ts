@@ -92,9 +92,11 @@ import { HttpClient } from '@angular/common/http';
                 </div>
 
                 <div class="form-group">
-                    <label>Image URL</label>
-                    <input type="text" [(ngModel)]="imageUrlInput" name="imageUrl" placeholder="http://...">
-                    <!-- Mock upload for real file would need FormData -->
+                    <label>Product Image</label>
+                    <div class="image-upload">
+                        <input type="file" (change)="onFileSelected($event)" accept="image/*">
+                        <img *ngIf="imageUrlInput" [src]="imageUrlInput" style="height: 50px; margin-left: 1rem; border-radius: 4px;">
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -171,6 +173,7 @@ export class AdminItemsComponent implements OnInit {
     isSaving = false;
     currentProduct: any = {};
     imageUrlInput = '';
+    selectedFile: File | null = null;
 
     private apiUrl = 'http://160.187.68.165:5001/api/products';
 
@@ -222,6 +225,19 @@ export class AdminItemsComponent implements OnInit {
         this.showModal = true;
     }
 
+    onFileSelected(event: any) {
+        const file = event.target.files[0];
+        if (file) {
+            this.selectedFile = file;
+            // Preview
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.imageUrlInput = reader.result as string; // For preview only
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     saveProduct() {
         if (!this.currentProduct.name || !this.currentProduct.price) {
             alert('Name and Price are required.');
@@ -229,24 +245,30 @@ export class AdminItemsComponent implements OnInit {
         }
 
         this.isSaving = true;
-        console.log('Saving Product...', this.currentProduct);
+        console.log('Saving Product with Image...', this.selectedFile?.name);
 
-        // Ensure proper types
-        this.currentProduct.categoryId = Number(this.currentProduct.categoryId);
-        this.currentProduct.price = Number(this.currentProduct.price);
-        this.currentProduct.discountPrice = Number(this.currentProduct.discountPrice || 0);
-        this.currentProduct.stockQuantity = Number(this.currentProduct.stockQuantity || 0);
+        const formData = new FormData();
+        formData.append('Name', this.currentProduct.name);
+        formData.append('Price', this.currentProduct.price.toString());
+        formData.append('Description', this.currentProduct.description || '');
+        formData.append('DiscountPrice', (this.currentProduct.discountPrice || 0).toString());
+        formData.append('StockQuantity', (this.currentProduct.stockQuantity || 0).toString());
+        formData.append('CategoryId', this.currentProduct.categoryId.toString());
+        formData.append('Sku', this.currentProduct.sku || ('SKU-' + Date.now()));
 
-        // Handle images
-        if (this.imageUrlInput) {
-            this.currentProduct.imageUrls = [this.imageUrlInput];
-        } else {
-            this.currentProduct.imageUrls = [];
+        // If editing
+        if (this.isEditing) {
+            formData.append('Id', this.currentProduct.id.toString());
         }
 
+        if (this.selectedFile) {
+            formData.append('Image', this.selectedFile);
+        }
+
+        // We use the same API URL. Backend expects FromForm.
         const request = this.isEditing
-            ? this.http.put(`${this.apiUrl}/${this.currentProduct.id}`, this.currentProduct)
-            : this.http.post(this.apiUrl, this.currentProduct);
+            ? this.http.put(`${this.apiUrl}/${this.currentProduct.id}`, formData)
+            : this.http.post(this.apiUrl, formData);
 
         request.subscribe({
             next: () => {
@@ -254,6 +276,7 @@ export class AdminItemsComponent implements OnInit {
                 this.loadData();
                 this.closeModal();
                 this.isSaving = false;
+                this.selectedFile = null;
             },
             error: (err) => {
                 console.error('Error saving product:', err);

@@ -23,7 +23,7 @@ import { FormsModule } from '@angular/forms';
             </div>
             <h2>Order Placed Successfully!</h2>
             <p>Thank you for your purchase. Your order #{{lastOrderId}} has been confirmed.</p>
-            <a routerLink="/products" class="btn btn-primary" (click)="reset()">Continue Shopping</a>
+            <a routerLink="/" class="btn btn-primary" (click)="reset()">Continue Shopping</a>
         </div>
       } @else if (cartItems().length === 0) {
         <div class="empty-state glass-panel animate-slide-up">

@@ -49,6 +49,7 @@ if (app.Environment.IsDevelopment() || true) // Enable swagger for demo
 }
 
 app.UseCors("AllowAll");
+app.UseStaticFiles(); // Enable serving static files
 app.UseAuthorization();
 app.MapControllers();
 

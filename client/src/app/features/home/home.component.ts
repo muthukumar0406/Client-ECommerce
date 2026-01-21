@@ -24,8 +24,8 @@ import { FormsModule } from '@angular/forms';
               </div>
            </div>
            <div class="contact-info">
-              <div class="contact-item"><i class="fas fa-phone-alt"></i> 9876543210</div>
-              <div class="contact-item"><i class="fas fa-envelope"></i> contact&#64;mkdemo.com</div>
+              <div class="contact-item"><i class="fas fa-phone-alt"></i> <a href="tel:8925170985" style="color: inherit; text-decoration: none;">8925170985</a></div>
+              <div class="contact-item"><i class="fas fa-envelope"></i> <a href="mailto:muthukumarbsc0406&#64;gmail.com" style="color: inherit; text-decoration: none;">muthukumarbsc0406&#64;gmail.com</a></div>
               <div class="contact-item"><i class="fas fa-map-marker-alt"></i> 123, Main Street, City</div>
            </div>
         </div>

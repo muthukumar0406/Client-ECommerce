@@ -28,7 +28,7 @@ export interface Order {
     status: string;
     createdDate: string;
     address: Address;
-    orderItems: OrderItem[];
+    items: OrderItem[];
 }
 
 @Injectable({

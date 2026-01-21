@@ -43,5 +43,20 @@ namespace Ecommerce.API.Controllers
             var result = await _categoryService.CreateSubCategoryAsync(subCategoryDto);
             return Ok(result);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, CategoryDto categoryDto)
+        {
+            if (id != categoryDto.Id) return BadRequest();
+            await _categoryService.UpdateCategoryAsync(categoryDto);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _categoryService.DeleteCategoryAsync(id);
+            return NoContent();
+        }
     }
 }

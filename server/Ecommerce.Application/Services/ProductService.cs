@@ -20,7 +20,7 @@ namespace Ecommerce.Application.Services
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
             var products = await _productRepository.GetAllAsync();
-            return products.Select(p => MapToDto(p));
+            return products.Where(p => !p.IsDeleted).Select(p => MapToDto(p));
         }
 
         public async Task<ProductDto?> GetProductByIdAsync(int id)
@@ -50,6 +50,11 @@ namespace Ecommerce.Application.Services
                 SubCategoryId = productDto.SubCategoryId,
                 IsEnabled = true
             };
+            
+            // Map images
+            foreach(var url in productDto.ImageUrls) {
+                product.Images.Add(new ProductImage { ImageUrl = url });
+            }
 
             await _productRepository.AddAsync(product);
             await _productRepository.SaveChangesAsync();
@@ -71,6 +76,16 @@ namespace Ecommerce.Application.Services
                 product.CategoryId = productDto.CategoryId;
                 product.SubCategoryId = productDto.SubCategoryId;
                 product.UpdatedAt = DateTime.UtcNow;
+
+                if (productDto.ImageUrls.Any())
+                {
+                    // For this simple implementation, if DTO has images, replace existing.
+                    product.Images.Clear();
+                    foreach (var url in productDto.ImageUrls)
+                    {
+                        product.Images.Add(new ProductImage { ImageUrl = url, ProductId = product.Id });
+                    }
+                }
 
                 _productRepository.Update(product);
                 await _productRepository.SaveChangesAsync();
@@ -101,8 +116,8 @@ namespace Ecommerce.Application.Services
                 Sku = p.Sku,
                 CategoryId = p.CategoryId,
                 SubCategoryId = p.SubCategoryId,
-                AverageRating = p.AverageRating
-                // ImageUrls logic would go here
+                AverageRating = p.AverageRating,
+                ImageUrls = p.Images.Select(i => i.ImageUrl).ToList()
             };
         }
     }

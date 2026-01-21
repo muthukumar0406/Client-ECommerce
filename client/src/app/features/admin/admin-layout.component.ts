@@ -61,9 +61,17 @@ import { RouterModule, Router } from '@angular/router';
         }
         .admin-tabs {
             width: 100%;
-            overflow-x: auto;
-            padding-bottom: 5px;
-            justify-content: flex-start;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-bottom: 0;
+            overflow: visible;
+        }
+        .admin-tabs a {
+            width: 100%;
+            justify-content: center;
+            border-radius: 8px;
+            padding: 0.8rem;
         }
         .actions {
             width: 100%;

@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Product } from './product.service';
+import { Product, ProductService } from './product.service';
 
 export interface CartItem {
     product: Product;
@@ -15,25 +15,51 @@ export class CartService {
     totalItems = computed(() => this.cartItems().reduce((acc, item) => acc + item.quantity, 0));
     totalPrice = computed(() => this.cartItems().reduce((acc, item) => acc + (item.product.price * item.quantity), 0));
 
-    constructor() {
+    constructor(private productService: ProductService) {
         // Load from local storage
         const saved = localStorage.getItem('cart');
         if (saved) {
             try {
                 this.cartItems.set(JSON.parse(saved));
+                this.validateCartPrices();
             } catch (e) {
                 console.error('Failed to parse cart', e);
             }
         }
     }
 
+    validateCartPrices() {
+        this.productService.getProducts().subscribe(products => {
+            const currentItems = this.cartItems();
+            let updated = false;
+            const verifiedItems = currentItems.map(item => {
+                const freshProd = products.find(p => p.id === item.product.id);
+                if (freshProd) {
+                    // Check if price changed
+                    if (freshProd.price !== item.product.price || freshProd.discountPrice !== item.product.discountPrice) {
+                        updated = true;
+                        return { ...item, product: freshProd };
+                    }
+                }
+                return item;
+            });
+
+            if (updated) {
+                this.cartItems.set(verifiedItems);
+                this.saveCart();
+            }
+        });
+    }
+
     addToCart(product: Product) {
+        // ... (existing code)
         this.cartItems.update(items => {
             const existing = items.find(i => i.product.id === product.id);
             if (existing) {
-                return items.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+                // IMPORTANT: Update price from the incoming product object, which is assumed to be fresh.
+                return items.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + 1, product: { ...i.product, price: product.price, discountPrice: product.discountPrice } } : i);
             }
-            return [...items, { product, quantity: 1 }];
+            return [...items, { product: { ...product }, quantity: 1 }];
         });
         this.saveCart();
     }
