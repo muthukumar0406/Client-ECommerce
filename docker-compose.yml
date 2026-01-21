@@ -10,6 +10,8 @@ services:
       - "1433:1433"
     networks:
       - ecommerce-network
+    volumes:
+      - mssql-data:/var/opt/mssql
 
   api:
     build:
@@ -44,3 +46,4 @@ networks:
 
 volumes:
   product-images:
+  mssql-data:

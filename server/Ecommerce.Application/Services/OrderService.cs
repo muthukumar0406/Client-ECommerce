@@ -46,7 +46,9 @@ namespace Ecommerce.Application.Services
                 var product = await _productRepository.GetByIdAsync(item.ProductId);
                 if (product != null)
                 {
-                    var unitPrice = product.DiscountPrice ?? product.Price;
+                    var unitPrice = (product.DiscountPrice.HasValue && product.DiscountPrice.Value > 0) 
+                        ? product.DiscountPrice.Value 
+                        : product.Price;
                     var itemTotal = unitPrice * item.Quantity;
                     total += itemTotal;
 
