@@ -99,7 +99,7 @@ import { RouterModule, Router } from '@angular/router';
     .filter-group h4 { font-size: 0.9rem; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
     .filter-group ul { list-style: none; padding: 0; }
     .filter-group li { margin-bottom: 0.5rem; }
-    .filter-group label { display: flex; items-center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-size: 0.95rem; }
+    .filter-group label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-size: 0.95rem; }
     .filter-group input { width: auto; margin: 0; }
 
     .product-results { flex: 1; }
