@@ -53,6 +53,28 @@ import { RouterModule, Router } from '@angular/router';
       box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
     
+    @media (max-width: 768px) {
+        .admin-navbar {
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .admin-tabs {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            justify-content: flex-start;
+        }
+        .actions {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .admin-content {
+            padding: 0 1rem 2rem;
+        }
+    }
+    
     .logo-area h3 { margin: 0; font-size: 1.5rem; color: var(--text-main); }
     .highlight { color: var(--primary-color); }
     
@@ -71,6 +93,7 @@ import { RouterModule, Router } from '@angular/router';
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        white-space: nowrap;
     }
     
     .admin-tabs a:hover {

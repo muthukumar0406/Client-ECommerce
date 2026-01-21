@@ -103,8 +103,10 @@ import { HttpClient } from '@angular/common/http';
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-outline" (click)="closeModal()" [disabled]="isSaving">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                        {{ isSaving ? 'Saving...' : 'Save' }}
+                    </button>
                 </div>
             </form>
         </div>
@@ -114,7 +116,7 @@ import { HttpClient } from '@angular/common/http';
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
     
     .table-container { overflow-x: auto; padding: 0; }
-    table { width: 100%; border-collapse: collapse; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
     th { text-align: left; padding: 1rem; background: #f8fafc; color: var(--text-muted); font-weight: 600; }
     td { padding: 1rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
     
@@ -135,14 +137,29 @@ import { HttpClient } from '@angular/common/http';
     .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.75rem; border: 1px solid #e2e8f0; background: white; border-radius: 4px; cursor: pointer; }
     
     /* Modal */
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1100; display: flex; align-items: center; justify-content: center; }
-    .modal { background: white; width: 90%; max-width: 600px; padding: 2rem; border-radius: 12px; }
+    .modal-backdrop { 
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1100; 
+        display: flex; align-items: center; justify-content: center; 
+        padding: 1rem;
+    }
+    .modal { 
+        background: white; width: 100%; max-width: 600px; padding: 2rem; border-radius: 12px; 
+        max-height: 90vh; overflow-y: auto;
+    }
+    
     .form-row { display: flex; gap: 1rem; }
     .half { flex: 1; }
+    
+    @media (max-width: 600px) {
+        .form-row { flex-direction: column; gap: 0; }
+        .modal { padding: 1.5rem; }
+    }
+
     .form-group { margin-bottom: 1rem; }
     .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
     .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #e2e8f0; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
   `]
 })
 export class AdminItemsComponent implements OnInit {
@@ -151,6 +168,7 @@ export class AdminItemsComponent implements OnInit {
 
     showModal = false;
     isEditing = false;
+    isSaving = false;
     currentProduct: any = {};
     imageUrlInput = '';
 
@@ -167,8 +185,14 @@ export class AdminItemsComponent implements OnInit {
     }
 
     loadData() {
-        this.productService.getProducts().subscribe(res => this.products.set(res));
-        this.categoryService.getCategories().subscribe(res => this.categories.set(res));
+        this.productService.getProducts().subscribe({
+            next: (res) => this.products.set(res),
+            error: (err) => console.error('Error loading products', err)
+        });
+        this.categoryService.getCategories().subscribe({
+            next: (res) => this.categories.set(res),
+            error: (err) => console.error('Error loading categories', err)
+        });
     }
 
     getCategoryName(id: number): string {
@@ -178,9 +202,11 @@ export class AdminItemsComponent implements OnInit {
     openModal() {
         this.showModal = true;
         this.isEditing = false;
+        // Default to first category if available
+        const firstCatId = this.categories().length > 0 ? this.categories()[0].id : null;
         this.currentProduct = {
             name: '', description: '', price: 0, discountPrice: 0,
-            stockQuantity: 100, categoryId: this.categories()[0]?.id
+            stockQuantity: 100, categoryId: firstCatId
         };
         this.imageUrlInput = '';
     }
@@ -197,39 +223,62 @@ export class AdminItemsComponent implements OnInit {
     }
 
     saveProduct() {
+        if (!this.currentProduct.name || !this.currentProduct.price) {
+            alert('Name and Price are required.');
+            return;
+        }
+
+        this.isSaving = true;
+        console.log('Saving Product...', this.currentProduct);
+
+        // Ensure proper types
+        this.currentProduct.categoryId = Number(this.currentProduct.categoryId);
+        this.currentProduct.price = Number(this.currentProduct.price);
+        this.currentProduct.discountPrice = Number(this.currentProduct.discountPrice || 0);
+        this.currentProduct.stockQuantity = Number(this.currentProduct.stockQuantity || 0);
+
         // Handle images
         if (this.imageUrlInput) {
             this.currentProduct.imageUrls = [this.imageUrlInput];
+        } else {
+            this.currentProduct.imageUrls = [];
         }
 
-        if (this.isEditing) {
-            this.http.put(`${this.apiUrl}/${this.currentProduct.id}`, this.currentProduct)
-                .subscribe(() => {
-                    this.loadData();
-                    this.closeModal();
-                });
-        } else {
-            this.http.post(this.apiUrl, this.currentProduct)
-                .subscribe(() => {
-                    this.loadData();
-                    this.closeModal();
-                });
-        }
+        const request = this.isEditing
+            ? this.http.put(`${this.apiUrl}/${this.currentProduct.id}`, this.currentProduct)
+            : this.http.post(this.apiUrl, this.currentProduct);
+
+        request.subscribe({
+            next: () => {
+                console.log('Product saved successfully');
+                this.loadData();
+                this.closeModal();
+                this.isSaving = false;
+            },
+            error: (err) => {
+                console.error('Error saving product:', err);
+                alert('Failed to save product. See console.');
+                this.isSaving = false;
+            }
+        });
     }
 
     deleteProduct(id: number) {
         if (confirm('Are you sure you want to delete this item?')) {
-            this.http.delete(`${this.apiUrl}/${id}`)
-                .subscribe(() => this.loadData());
+            this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+                next: () => this.loadData(),
+                error: (err) => console.error('Delete failed', err)
+            });
         }
     }
 
     toggleStock(prod: Product) {
         const newStock = prod.stockQuantity > 0 ? 0 : 100;
         const updated = { ...prod, stockQuantity: newStock };
-        // Assuming API supports this or we just update the specific field.
         // Using PUT for simplicity
-        this.http.put(`${this.apiUrl}/${prod.id}`, updated)
-            .subscribe(() => this.loadData());
+        this.http.put(`${this.apiUrl}/${prod.id}`, updated).subscribe({
+            next: () => this.loadData(),
+            error: (err) => console.error('Stock update failed', err)
+        });
     }
 }

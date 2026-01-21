@@ -45,8 +45,10 @@ import { HttpClient } from '@angular/common/http';
                     <textarea [(ngModel)]="currentCategory.description" name="description"></textarea>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-outline" (click)="closeModal()" [disabled]="isSaving">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                        {{ isSaving ? 'Saving...' : 'Save' }}
+                    </button>
                 </div>
             </form>
         </div>
@@ -83,21 +85,25 @@ import { HttpClient } from '@angular/common/http';
     .modal-backdrop {
         position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1100;
         display: flex; align-items: center; justify-content: center;
+        padding: 1rem;
     }
     .modal {
-        background: white; width: 90%; max-width: 500px; padding: 2rem; border-radius: 12px;
+        background: white; width: 100%; max-width: 500px; padding: 2rem; border-radius: 12px;
+        max-height: 90vh; overflow-y: auto;
     }
     .form-group { margin-bottom: 1.5rem; }
     .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
     .form-group input, .form-group textarea { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #e2e8f0; }
     
     .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
   `]
 })
 export class AdminCategoriesComponent implements OnInit {
     categories = signal<Category[]>([]);
     showModal = false;
     isEditing = false;
+    isSaving = false;
     currentCategory: any = { name: '', description: '' };
 
     private apiUrl = 'http://160.187.68.165:5001/api/categories';
@@ -112,7 +118,10 @@ export class AdminCategoriesComponent implements OnInit {
     }
 
     loadCategories() {
-        this.categoryService.getCategories().subscribe(res => this.categories.set(res));
+        this.categoryService.getCategories().subscribe({
+            next: (res) => this.categories.set(res),
+            error: (err) => console.error('Failed to load categories', err)
+        });
     }
 
     openModal() {
@@ -132,25 +141,39 @@ export class AdminCategoriesComponent implements OnInit {
     }
 
     saveCategory() {
-        if (this.isEditing) {
-            this.http.put(`${this.apiUrl}/${this.currentCategory.id}`, this.currentCategory)
-                .subscribe(() => {
-                    this.loadCategories();
-                    this.closeModal();
-                });
-        } else {
-            this.http.post(this.apiUrl, this.currentCategory)
-                .subscribe(() => {
-                    this.loadCategories();
-                    this.closeModal();
-                });
+        if (!this.currentCategory.name) {
+            alert('Category Name is required');
+            return;
         }
+
+        this.isSaving = true;
+        console.log('Saving Category...', this.currentCategory);
+
+        const request = this.isEditing
+            ? this.http.put(`${this.apiUrl}/${this.currentCategory.id}`, this.currentCategory)
+            : this.http.post(this.apiUrl, this.currentCategory);
+
+        request.subscribe({
+            next: () => {
+                console.log('Category saved successfully');
+                this.loadCategories();
+                this.closeModal();
+                this.isSaving = false;
+            },
+            error: (err) => {
+                console.error('Error saving category:', err);
+                alert('Failed to save category. See console for details.');
+                this.isSaving = false;
+            }
+        });
     }
 
     deleteCategory(id: number) {
         if (confirm('Are you sure you want to delete this category?')) {
-            this.http.delete(`${this.apiUrl}/${id}`)
-                .subscribe(() => this.loadCategories());
+            this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+                next: () => this.loadCategories(),
+                error: (err) => console.error('Delete failed', err)
+            });
         }
     }
 }
