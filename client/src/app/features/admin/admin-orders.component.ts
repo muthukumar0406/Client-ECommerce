@@ -50,7 +50,7 @@ import { OrderService, Order } from '../../core/services/order.service';
                             </tr>
                         </thead>
                         <tbody>
-                            @for (item of order.items; track item.id || item.productId) {
+                            @for (item of order.items; track item.id) {
                                 <tr>
                                     <td>{{item.productName}}</td>
                                     <td>{{item.quantity}}</td>
