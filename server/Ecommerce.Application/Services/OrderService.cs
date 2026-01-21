@@ -94,6 +94,14 @@ namespace Ecommerce.Application.Services
                 FinalAmount = o.FinalAmount,
                 Status = o.Status.ToString(),
                 OrderDate = o.CreatedAt,
+                Address = o.Address != null ? new AddressDto
+                {
+                    Street = o.Address.Street,
+                    City = o.Address.City,
+                    State = o.Address.State,
+                    ZipCode = o.Address.ZipCode,
+                    Country = o.Address.Country
+                } : null,
                 Items = o.OrderItems.Select(i => new OrderItemDto 
                 { 
                     ProductId = i.ProductId,
