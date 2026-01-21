@@ -50,6 +50,16 @@ namespace Ecommerce.API.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(productRequest.Name))
+                {
+                    return BadRequest(new { error = "Product name is required" });
+                }
+
+                if (productRequest.CategoryId <= 0)
+                {
+                    return BadRequest(new { error = "Valid Category ID is required" });
+                }
+
                 var pDto = new ProductDto
                 {
                     Name = productRequest.Name,
@@ -57,7 +67,7 @@ namespace Ecommerce.API.Controllers
                     Price = productRequest.Price,
                     DiscountPrice = productRequest.DiscountPrice,
                     StockQuantity = productRequest.StockQuantity,
-                    Sku = string.IsNullOrEmpty(productRequest.Sku) ? "SKU-" + Guid.NewGuid().ToString().Substring(0, 8) : productRequest.Sku,
+                    Sku = string.IsNullOrEmpty(productRequest.Sku) ? "SKU-" + Guid.NewGuid().ToString().ToUpper().Substring(0, 8) : productRequest.Sku,
                     CategoryId = productRequest.CategoryId,
                     SubCategoryId = productRequest.SubCategoryId
                 };

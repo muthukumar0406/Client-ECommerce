@@ -206,12 +206,18 @@ export class AdminItemsComponent implements OnInit {
         this.showModal = true;
         this.isEditing = false;
         // Default to first category if available
-        const firstCatId = this.categories().length > 0 ? this.categories()[0].id : null;
+        const firstCatId = this.categories().length > 0 ? this.categories()[0].id : 0;
         this.currentProduct = {
-            name: '', description: '', price: 0, discountPrice: 0,
-            stockQuantity: 100, categoryId: firstCatId
+            name: '',
+            description: '',
+            price: 0,
+            discountPrice: 0,
+            stockQuantity: 100,
+            categoryId: firstCatId,
+            sku: ''
         };
         this.imageUrlInput = '';
+        this.selectedFile = null;
     }
 
     closeModal() {
@@ -244,8 +250,13 @@ export class AdminItemsComponent implements OnInit {
             return;
         }
 
+        if (!this.currentProduct.categoryId) {
+            alert('Please select a category.');
+            return;
+        }
+
         this.isSaving = true;
-        console.log('Saving Product with Image...', this.selectedFile?.name);
+        console.log('Preparing to save product...', this.currentProduct);
 
         const formData = new FormData();
         formData.append('Name', this.currentProduct.name);
@@ -256,31 +267,39 @@ export class AdminItemsComponent implements OnInit {
         formData.append('CategoryId', this.currentProduct.categoryId.toString());
         formData.append('Sku', this.currentProduct.sku || ('SKU-' + Date.now()));
 
-        // If editing
         if (this.isEditing) {
             formData.append('Id', this.currentProduct.id.toString());
         }
 
         if (this.selectedFile) {
+            console.log('Adding image file to FormData:', this.selectedFile.name);
             formData.append('Image', this.selectedFile);
         }
 
-        // We use the same API URL. Backend expects FromForm.
         const request = this.isEditing
             ? this.http.put(`${this.apiUrl}/${this.currentProduct.id}`, formData)
             : this.http.post(this.apiUrl, formData);
 
         request.subscribe({
-            next: () => {
-                console.log('Product saved successfully');
+            next: (res) => {
+                console.log('Product saved successfully', res);
                 this.loadData();
                 this.closeModal();
                 this.isSaving = false;
                 this.selectedFile = null;
             },
             error: (err) => {
-                console.error('Error saving product:', err);
-                alert('Failed to save product. See console.');
+                console.error('SERVER ERROR:', err);
+                let msg = 'Failed to save product.';
+                if (err.status === 400) msg += ' Invalid data provided (400 Bad Request).';
+                if (err.status === 500) msg += ' Server Internal Error (500).';
+
+                if (err.error) {
+                    console.error('Error Details:', err.error);
+                    if (err.error.error) msg += '\nServer Message: ' + err.error.error;
+                }
+
+                alert(msg);
                 this.isSaving = false;
             }
         });
@@ -296,12 +315,26 @@ export class AdminItemsComponent implements OnInit {
     }
 
     toggleStock(prod: Product) {
+        this.isSaving = true;
         const newStock = prod.stockQuantity > 0 ? 0 : 100;
-        const updated = { ...prod, stockQuantity: newStock };
-        // Using PUT for simplicity
-        this.http.put(`${this.apiUrl}/${prod.id}`, updated).subscribe({
-            next: () => this.loadData(),
-            error: (err) => console.error('Stock update failed', err)
+
+        // Backend expects FromForm, so we use FormData even for single state toggle
+        const formData = new FormData();
+        formData.append('Name', prod.name);
+        formData.append('Price', prod.price.toString());
+        formData.append('CategoryId', prod.categoryId.toString());
+        formData.append('StockQuantity', newStock.toString());
+        formData.append('Id', prod.id.toString());
+
+        this.http.put(`${this.apiUrl}/${prod.id}`, formData).subscribe({
+            next: () => {
+                this.loadData();
+                this.isSaving = false;
+            },
+            error: (err) => {
+                console.error('Stock update failed', err);
+                this.isSaving = false;
+            }
         });
     }
 }
