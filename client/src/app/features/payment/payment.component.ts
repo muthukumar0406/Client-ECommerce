@@ -14,6 +14,7 @@ declare var Razorpay: any;
     template: `
     <div class="container payment-page">
       <div class="header-row">
+          <a routerLink="/cart" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Cart</a>
           <h2 class="page-title">Select Payment Method</h2>
       </div>
 
@@ -101,8 +102,9 @@ declare var Razorpay: any;
   `,
     styles: [`
     .payment-page { padding-bottom: 50px; }
-    .header-row { margin-bottom: 2rem; }
-    .page-title { font-size: 1.8rem; color: var(--text-main); }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+    .back-btn { color: var(--text-main); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .page-title { margin: 0; font-size: 1.8rem; color: var(--text-main); }
 
     .glass-panel { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     
