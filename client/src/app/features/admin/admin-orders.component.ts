@@ -44,7 +44,7 @@ import { OrderService, Order } from '../../core/services/order.service';
                     </div>
                     <div class="info-item full">
                         <label>Delivery Address</label>
-                        <span>{{order.address.street}}, {{order.address.city}}, {{order.address.state}} - {{order.address.postalCode || order.address.zipCode}}</span>
+                        <span>{{order.address.street}}, {{order.address.city}}, {{order.address.state}} - {{order.address.zipCode}}</span>
                     </div>
                 </div>
 
