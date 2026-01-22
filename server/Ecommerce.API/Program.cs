@@ -94,6 +94,9 @@ using (var scope = app.Services.CreateScope())
                             PaymentMode int NOT NULL,
                             PaymentStatus int NOT NULL,
                             CreatedDate datetime2 NOT NULL,
+                            CreatedAt datetime2 NOT NULL DEFAULT GETDATE(),
+                            UpdatedAt datetime2 NULL,
+                            IsDeleted bit NOT NULL DEFAULT 0,
                             CONSTRAINT FK_Payments_Orders_OrderId FOREIGN KEY (OrderId) REFERENCES Orders (Id) ON DELETE CASCADE
                         );
                         CREATE INDEX IX_Payments_OrderId ON Payments (OrderId);
