@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
     volumes:
-      - product-images:/app/wwwroot/images/products
+      - ./server/wwwroot/images/products:/app/wwwroot/images/products
     networks:
       - ecommerce-network
 
@@ -45,5 +45,4 @@ networks:
     driver: bridge
 
 volumes:
-  product-images:
   mssql-data:
