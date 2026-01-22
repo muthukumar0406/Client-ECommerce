@@ -68,7 +68,7 @@ namespace Ecommerce.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.ToString() });
             }
         }
     }
