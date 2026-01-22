@@ -17,6 +17,7 @@ namespace Ecommerce.Application.DTOs
         public string? SubCategoryName { get; set; }
         public List<string> ImageUrls { get; set; } = new List<string>();
         public double AverageRating { get; set; }
+        public string QuantityUnit { get; set; } = string.Empty;
     }
 
     public class CategoryDto

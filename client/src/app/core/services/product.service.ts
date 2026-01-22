@@ -12,6 +12,7 @@ export interface Product {
     sku: string;
     categoryId: number;
     imageUrls: string[];
+    quantityUnit: string;
 }
 
 @Injectable({

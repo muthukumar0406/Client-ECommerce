@@ -69,7 +69,8 @@ namespace Ecommerce.API.Controllers
                     StockQuantity = productRequest.StockQuantity,
                     Sku = string.IsNullOrEmpty(productRequest.Sku) ? "SKU-" + Guid.NewGuid().ToString().ToUpper().Substring(0, 8) : productRequest.Sku,
                     CategoryId = productRequest.CategoryId,
-                    SubCategoryId = productRequest.SubCategoryId
+                    SubCategoryId = productRequest.SubCategoryId,
+                    QuantityUnit = productRequest.QuantityUnit
                 };
 
                 if (productRequest.Image != null && productRequest.Image.Length > 0)
@@ -120,7 +121,8 @@ namespace Ecommerce.API.Controllers
                     DiscountPrice = productRequest.DiscountPrice,
                     StockQuantity = productRequest.StockQuantity,
                     CategoryId = productRequest.CategoryId,
-                    SubCategoryId = productRequest.SubCategoryId
+                    SubCategoryId = productRequest.SubCategoryId,
+                    QuantityUnit = productRequest.QuantityUnit
                 };
 
                 if (productRequest.Image != null && productRequest.Image.Length > 0)

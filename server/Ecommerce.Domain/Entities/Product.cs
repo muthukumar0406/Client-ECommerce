@@ -12,6 +12,7 @@ namespace Ecommerce.Domain.Entities
         public string Sku { get; set; } = string.Empty;
         public bool IsEnabled { get; set; } = true;
         public double AverageRating { get; set; }
+        public string QuantityUnit { get; set; } = string.Empty;
         
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; } = null!;

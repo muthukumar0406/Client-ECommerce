@@ -13,6 +13,7 @@ namespace Ecommerce.API.DTOs
         public int CategoryId { get; set; }
         public int? SubCategoryId { get; set; }
         public IFormFile? Image { get; set; }
+        public string QuantityUnit { get; set; } = string.Empty;
         public int? Id { get; set; } // For Update
     }
 }

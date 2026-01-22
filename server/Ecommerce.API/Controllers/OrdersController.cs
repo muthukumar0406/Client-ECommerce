@@ -43,5 +43,12 @@ namespace Ecommerce.API.Controllers
             await _orderService.UpdateOrderStatusAsync(id, status);
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _orderService.DeleteOrderAsync(id);
+            return NoContent();
+        }
     }
 }

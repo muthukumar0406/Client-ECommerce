@@ -26,6 +26,7 @@ import { HttpClient } from '@angular/common/http';
                     <th>Name</th>
                     <th>Category</th>
                     <th>Price</th>
+                    <th>Quantity / Unit</th>
                     <th>Stock</th>
                     <th>Actions</th>
                 </tr>
@@ -42,6 +43,7 @@ import { HttpClient } from '@angular/common/http';
                                 <span class="new">₹{{prod.discountPrice || prod.price}}</span>
                             </div>
                         </td>
+                        <td>{{prod.quantityUnit || 'N/A'}}</td>
                         <td>
                             <span class="stock-badge" [class.out]="prod.stockQuantity <= 0">
                                 {{prod.stockQuantity > 0 ? 'In Stock' : 'Out of Stock'}}
@@ -91,6 +93,11 @@ import { HttpClient } from '@angular/common/http';
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label>Quantity / Unit (e.g., 500 ml, 1 kg)</label>
+                    <input type="text" [(ngModel)]="currentProduct.quantityUnit" name="quantityUnit" placeholder="e.g. 500 ml">
+                </div>
+                
                 <div class="form-group">
                     <label>Product Image</label>
                     <div class="image-upload">
@@ -214,7 +221,8 @@ export class AdminItemsComponent implements OnInit {
             discountPrice: 0,
             stockQuantity: 100,
             categoryId: firstCatId,
-            sku: ''
+            sku: '',
+            quantityUnit: ''
         };
         this.imageUrlInput = '';
         this.selectedFile = null;
@@ -266,6 +274,7 @@ export class AdminItemsComponent implements OnInit {
         formData.append('StockQuantity', (this.currentProduct.stockQuantity || 0).toString());
         formData.append('CategoryId', this.currentProduct.categoryId.toString());
         formData.append('Sku', this.currentProduct.sku || ('SKU-' + Date.now()));
+        formData.append('QuantityUnit', this.currentProduct.quantityUnit || '');
 
         if (this.isEditing) {
             formData.append('Id', this.currentProduct.id.toString());

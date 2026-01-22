@@ -10,6 +10,7 @@ namespace Ecommerce.Application.Interfaces
         Task<IEnumerable<OrderDto>> GetAllOrdersAsync();
         Task<OrderDto?> GetOrderByIdAsync(int id);
         Task UpdateOrderStatusAsync(int orderId, string status);
+        Task DeleteOrderAsync(int id);
         Task<IEnumerable<OrderDto>> GetOrdersByEmailAsync(string email);
     }
 }

@@ -9,6 +9,7 @@ export interface OrderItem {
     quantity: number;
     unitPrice: number;
     totalPrice: number;
+    quantityUnit: string;
 }
 
 export interface Address {
@@ -50,5 +51,15 @@ export class OrderService {
 
     createOrder(order: any): Observable<any> {
         return this.http.post(this.apiUrl, order);
+    }
+
+    updateStatus(id: number, status: string): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/${id}/status`, `"${status}"`, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+
+    deleteOrder(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 }

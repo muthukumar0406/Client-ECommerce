@@ -120,7 +120,8 @@ namespace Ecommerce.Application.Services
                     ProductId = i.ProductId,
                     ProductName = products.FirstOrDefault(p => p.Id == i.ProductId)?.Name ?? "Product " + i.ProductId, 
                     Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
+                    UnitPrice = i.UnitPrice,
+                    QuantityUnit = products.FirstOrDefault(p => p.Id == i.ProductId)?.QuantityUnit ?? ""
                 }).ToList()
             });
         }
@@ -150,6 +151,16 @@ namespace Ecommerce.Application.Services
                 order.Status = orderStatus;
                 order.UpdatedAt = DateTime.UtcNow;
                 _orderRepository.Update(order);
+                await _orderRepository.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteOrderAsync(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order != null)
+            {
+                _orderRepository.Remove(order);
                 await _orderRepository.SaveChangesAsync();
             }
         }

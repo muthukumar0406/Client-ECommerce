@@ -74,6 +74,7 @@ import { FormsModule } from '@angular/forms';
                     </div>
                     <div class="item-details">
                       <h4>{{ item.product.name }}</h4>
+                      <p class="unit-text" *ngIf="item.product.quantityUnit">{{item.product.quantityUnit}}</p>
                       <div class="qty-price">
                           <div class="quantity-control">
                             <button (click)="updateQty(item.product.id, -1)" [disabled]="item.quantity <= 1">-</button>
@@ -162,6 +163,7 @@ import { FormsModule } from '@angular/forms';
     
     .item-details { flex: 1; }
     .item-details h4 { margin: 0 0 0.5rem; font-size: 1rem; }
+    .unit-text { font-size: 0.85rem; color: var(--text-muted); margin: -0.3rem 0 0.5rem; }
     .qty-price { display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; }
     .price { font-weight: 700; color: var(--text-main); }
     

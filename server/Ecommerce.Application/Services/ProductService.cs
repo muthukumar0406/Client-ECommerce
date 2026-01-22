@@ -48,6 +48,7 @@ namespace Ecommerce.Application.Services
                 Sku = productDto.Sku,
                 CategoryId = productDto.CategoryId,
                 SubCategoryId = productDto.SubCategoryId,
+                QuantityUnit = productDto.QuantityUnit,
                 IsEnabled = true
             };
             
@@ -81,6 +82,7 @@ namespace Ecommerce.Application.Services
                         productWithImages.StockQuantity = productDto.StockQuantity;
                         productWithImages.CategoryId = productDto.CategoryId;
                         productWithImages.SubCategoryId = productDto.SubCategoryId;
+                        productWithImages.QuantityUnit = productDto.QuantityUnit;
                         productWithImages.UpdatedAt = DateTime.UtcNow;
 
                         productWithImages.Images.Clear();
@@ -100,6 +102,7 @@ namespace Ecommerce.Application.Services
                     product.StockQuantity = productDto.StockQuantity;
                     product.CategoryId = productDto.CategoryId;
                     product.SubCategoryId = productDto.SubCategoryId;
+                    product.QuantityUnit = productDto.QuantityUnit;
                     product.UpdatedAt = DateTime.UtcNow;
                     _productRepository.Update(product);
                 }
@@ -133,7 +136,8 @@ namespace Ecommerce.Application.Services
                 CategoryId = p.CategoryId,
                 SubCategoryId = p.SubCategoryId,
                 AverageRating = p.AverageRating,
-                ImageUrls = p.Images.Select(i => i.ImageUrl).ToList()
+                ImageUrls = p.Images.Select(i => i.ImageUrl).ToList(),
+                QuantityUnit = p.QuantityUnit
             };
         }
     }

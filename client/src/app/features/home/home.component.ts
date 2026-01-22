@@ -71,6 +71,9 @@ import { FormsModule } from '@angular/forms';
                           <span class="original-price" *ngIf="prod.discountPrice && prod.price > prod.discountPrice">₹{{prod.price}}</span>
                           <span class="final-price">₹{{prod.discountPrice || prod.price}}</span>
                       </div>
+                      <div class="quantity-unit" *ngIf="prod.quantityUnit">
+                         <small>{{prod.quantityUnit}}</small>
+                      </div>
                       
                       <!-- Add Button / Quantity Controls -->
                       <div class="actions">
@@ -216,6 +219,7 @@ import { FormsModule } from '@angular/forms';
     .price-block { display: flex; gap: 0.5rem; align-items: baseline; margin-top: 0.5rem; }
     .original-price { text-decoration: line-through; color: var(--text-muted); font-size: 0.9rem; }
     .final-price { font-weight: bold; font-size: 1.1rem; color: var(--primary-color); }
+    .quantity-unit { margin-top: -0.2rem; color: var(--text-muted); font-weight: 500; }
     
     .actions { margin-top: auto; }
     .add-btn {
