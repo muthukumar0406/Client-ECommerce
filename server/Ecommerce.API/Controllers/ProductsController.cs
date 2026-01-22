@@ -77,7 +77,6 @@ namespace Ecommerce.API.Controllers
                 {
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(productRequest.Image.FileName);
                     
-                    // Safe WebRootPath
                     var rootPath = _env.WebRootPath;
                     if (string.IsNullOrEmpty(rootPath))
                     {
@@ -93,8 +92,14 @@ namespace Ecommerce.API.Controllers
                         await productRequest.Image.CopyToAsync(stream);
                     }
                     
-                    // Use a relative path or fixed IP for now as per previous implementation
-                    var displayUrl = $"http://160.187.68.165:5001/images/products/{fileName}";
+                    // Use dynamic host instead of hardcoded IP
+                    var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                    if (Request.Host.Host == "localhost" || Request.Host.Host == "127.0.0.1")
+                    {
+                         // Fallback to provided server IP if accessed locally but serving from server
+                         // Actually, Request.Host should be correct if accessed via public IP.
+                    }
+                    var displayUrl = $"{baseUrl}/images/products/{fileName}";
                     pDto.ImageUrls = new List<string> { displayUrl };
                 }
 
@@ -144,7 +149,8 @@ namespace Ecommerce.API.Controllers
                         await productRequest.Image.CopyToAsync(stream);
                     }
                     
-                    var displayUrl = $"http://160.187.68.165:5001/images/products/{fileName}";
+                    var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                    var displayUrl = $"{baseUrl}/images/products/{fileName}";
                     pDto.ImageUrls = new List<string> { displayUrl };
                 }
                 else 

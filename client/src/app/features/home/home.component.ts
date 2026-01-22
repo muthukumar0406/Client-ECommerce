@@ -61,36 +61,41 @@ import { FormsModule } from '@angular/forms';
       <section class="product-list container">
          <div class="grid">
             @for (prod of filteredProducts(); track prod.id) {
-               <div class="product-card glass-panel">
-                  <div class="img-box">
-                      <img [src]="prod.imageUrls[0] || 'assets/placeholder.png'" [alt]="prod.name" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
-                  </div>
-                  <div class="details">
-                      <h3>{{prod.name}}</h3>
-                      <div class="price-block">
-                          <span class="original-price" *ngIf="prod.discountPrice && prod.price > prod.discountPrice">₹{{prod.price}}</span>
-                          <span class="final-price">₹{{prod.discountPrice || prod.price}}</span>
-                      </div>
-                      <div class="quantity-unit" *ngIf="prod.quantityUnit">
-                         <small>{{prod.quantityUnit}}</small>
-                      </div>
-                      
-                      <!-- Add Button / Quantity Controls -->
-                      <div class="actions">
-                          @if (prod.stockQuantity <= 0) {
-                              <button class="add-btn" disabled style="opacity: 0.5; cursor: not-allowed; background: #eee; border-color: #ddd; color: #999;">Out of Stock</button>
-                          } @else if (getQuantity(prod.id) === 0) {
-                              <button class="add-btn" (click)="increment(prod)">ADD</button>
-                          } @else {
-                              <div class="qty-control">
-                                  <button (click)="decrement(prod)">-</button>
-                                  <span>{{getQuantity(prod.id)}}</span>
-                                  <button (click)="increment(prod)">+</button>
-                              </div>
-                          }
-                      </div>
-                  </div>
-               </div>
+                <div class="product-card glass-panel">
+                   <div class="img-box">
+                       <img [src]="prod.imageUrls[0] || 'assets/placeholder.png'" [alt]="prod.name" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                   </div>
+                   <div class="details">
+                       <div class="header-info">
+                           <h3>{{prod.name}}</h3>
+                           <div class="quantity-badge" *ngIf="prod.quantityUnit">
+                              {{prod.quantityUnit}}
+                           </div>
+                       </div>
+                       
+                       <div class="price-section">
+                           <div class="price-block">
+                               <span class="final-price">₹{{prod.discountPrice || prod.price}}</span>
+                               <span class="original-price" *ngIf="prod.discountPrice && prod.price > prod.discountPrice">₹{{prod.price}}</span>
+                           </div>
+                       </div>
+                       
+                       <!-- Add Button / Quantity Controls -->
+                       <div class="actions">
+                           @if (prod.stockQuantity <= 0) {
+                               <button class="add-btn out-of-stock" disabled>Out of Stock</button>
+                           } @else if (getQuantity(prod.id) === 0) {
+                               <button class="add-btn" (click)="increment(prod)">ADD TO CART</button>
+                           } @else {
+                               <div class="qty-control">
+                                   <button (click)="decrement(prod)" class="qty-btn">-</button>
+                                   <span class="qty-val">{{getQuantity(prod.id)}}</span>
+                                   <button (click)="increment(prod)" class="qty-btn">+</button>
+                               </div>
+                           }
+                       </div>
+                   </div>
+                </div>
             } @empty {
                 <div class="empty-state">
                    <p>No products found matching your criteria.</p>
@@ -204,24 +209,36 @@ import { FormsModule } from '@angular/forms';
     
     .product-card {
         overflow: hidden;
-        padding: 1rem;
+        padding: 0.8rem;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.8rem;
+        transition: transform 0.2s, box-shadow 0.2s;
     }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+
     .img-box {
-        height: 140px;
+        height: 120px;
         display: flex; align-items: center; justify-content: center;
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 0.5rem;
     }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     
-    .details h3 { font-size: 1rem; margin: 0; line-height: 1.3; height: 2.6rem; overflow: hidden; }
-    .price-block { display: flex; gap: 0.5rem; align-items: baseline; margin-top: 0.5rem; }
-    .original-price { text-decoration: line-through; color: var(--text-muted); font-size: 0.9rem; }
-    .final-price { font-weight: bold; font-size: 1.1rem; color: var(--primary-color); }
-    .quantity-unit { margin-top: -0.2rem; color: var(--text-muted); font-weight: 500; }
+    .details { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
     
-    .actions { margin-top: auto; }
+    .header-info { display: flex; flex-direction: column; gap: 0.25rem; }
+    .header-info h3 { font-size: 0.95rem; margin: 0; font-weight: 600; color: #334155; line-height: 1.2; min-height: 2.4rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    
+    .quantity-badge { font-size: 0.75rem; color: #64748b; font-weight: 500; background: #f1f5f9; padding: 0.1rem 0.5rem; border-radius: 4px; align-self: flex-start; }
+    
+    .price-section { margin-top: 0.25rem; }
+    .price-block { display: flex; gap: 0.5rem; align-items: baseline; }
+    .final-price { font-weight: 700; font-size: 1.1rem; color: #0f172a; }
+    .original-price { text-decoration: line-through; color: #94a3b8; font-size: 0.85rem; }
+    
+    .actions { margin-top: auto; padding-top: 0.5rem; }
     .add-btn {
         width: 100%;
         padding: 0.6rem;
@@ -230,11 +247,13 @@ import { FormsModule } from '@angular/forms';
         border: 1px solid var(--primary-color);
         color: var(--primary-color);
         border-radius: 8px;
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 0.85rem;
         cursor: pointer;
         transition: all 0.2s;
     }
     .add-btn:hover { background: var(--primary-color); color: white; }
+    .add-btn.out-of-stock { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
     
     .qty-control {
         display: flex;
@@ -243,12 +262,14 @@ import { FormsModule } from '@angular/forms';
         background: var(--primary-color);
         color: white;
         border-radius: 8px;
-        padding: 0.3rem;
+        padding: 0.2rem;
     }
-    .qty-control button {
+    .qty-btn {
         background: none; border: none; color: white;
         width: 30px; height: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
     }
+    .qty-val { font-weight: 700; font-size: 0.9rem; }
     
     /* Sticky Cart Bar */
     .cart-bar {
