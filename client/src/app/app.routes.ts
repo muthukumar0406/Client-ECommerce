@@ -12,6 +12,7 @@ export const routes: Routes = [
             { path: 'products', loadComponent: () => import('./features/products/product-list.component').then(m => m.ProductListComponent) },
             { path: 'products/:id', loadComponent: () => import('./features/products/product-detail.component').then(m => m.ProductDetailComponent) },
             { path: 'cart', loadComponent: () => import('./features/cart/cart.component').then(m => m.CartComponent) },
+            { path: 'payment/:id', loadComponent: () => import('./features/payment/payment.component').then(m => m.PaymentComponent) },
         ]
     },
     { path: 'admin/login', loadComponent: () => import('./features/admin/admin-login.component').then(m => m.AdminLoginComponent) },

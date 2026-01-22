@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ecommerce.Domain.Enums;
 
 namespace Ecommerce.Application.DTOs
 {
@@ -12,6 +13,8 @@ namespace Ecommerce.Application.DTOs
         public string CustomerName { get; set; } = string.Empty;
         public decimal FinalAmount { get; set; }
         public string Status { get; set; } = string.Empty;
+        public PaymentMode PaymentMode { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
         public DateTime OrderDate { get; set; }
         public AddressDto? Address { get; set; }
         public List<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
@@ -31,6 +34,7 @@ namespace Ecommerce.Application.DTOs
         public string CustomerName { get; set; } = string.Empty;
         public string CustomerPhone { get; set; } = string.Empty;
         public AddressDto ShippingAddress { get; set; } = null!;
+        public PaymentMode PaymentMode { get; set; }
         public List<CartItemDto> Items { get; set; } = new List<CartItemDto>();
     }
 

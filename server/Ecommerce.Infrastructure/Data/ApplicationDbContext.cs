@@ -20,6 +20,7 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<Cart> Carts { get; set; } = null!;
         public DbSet<CartItem> CartItems { get; set; } = null!;
         public DbSet<Admin> Admins { get; set; } = null!;
+        public DbSet<Payment> Payments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

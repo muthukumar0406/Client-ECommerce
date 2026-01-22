@@ -19,9 +19,13 @@ namespace Ecommerce.Domain.Entities
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public string? TrackingNumber { get; set; }
         
+        public PaymentMode PaymentMode { get; set; }
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
+
         public int AddressId { get; set; }
         public virtual Address Address { get; set; } = null!;
         
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

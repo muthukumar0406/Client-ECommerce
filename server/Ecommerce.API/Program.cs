@@ -26,6 +26,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IRepository<SubCategory>, Repository<SubCategory>>(); // Needed for CategoryService
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // CORS
 builder.Services.AddCors(options =>

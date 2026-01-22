@@ -37,7 +37,9 @@ namespace Ecommerce.Application.Services
                     State = createOrderDto.ShippingAddress.State,
                     ZipCode = createOrderDto.ShippingAddress.ZipCode,
                     Country = createOrderDto.ShippingAddress.Country
-                }
+                },
+                PaymentMode = createOrderDto.PaymentMode,
+                PaymentStatus = PaymentStatus.Pending
             };
 
             decimal total = 0;
@@ -78,6 +80,8 @@ namespace Ecommerce.Application.Services
                 OrderNumber = order.OrderNumber,
                 FinalAmount = order.FinalAmount,
                 Status = order.Status.ToString(),
+                PaymentMode = order.PaymentMode,
+                PaymentStatus = order.PaymentStatus,
                 OrderDate = order.CreatedAt
             };
         }
@@ -99,7 +103,10 @@ namespace Ecommerce.Application.Services
                 CustomerPhone = o.CustomerPhone,
                 CustomerEmail = o.CustomerEmail,
                 FinalAmount = o.FinalAmount,
+                FinalAmount = o.FinalAmount,
                 Status = o.Status.ToString(),
+                PaymentMode = o.PaymentMode,
+                PaymentStatus = o.PaymentStatus,
                 OrderDate = o.CreatedAt,
                 Address = o.Address != null ? new AddressDto
                 {
@@ -130,6 +137,8 @@ namespace Ecommerce.Application.Services
                 CustomerName = order.CustomerName,
                 FinalAmount = order.FinalAmount,
                 Status = order.Status.ToString(),
+                PaymentMode = order.PaymentMode,
+                PaymentStatus = order.PaymentStatus,
                 OrderDate = order.CreatedAt
             };
         }

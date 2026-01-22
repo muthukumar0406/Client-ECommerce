@@ -29,6 +29,14 @@ namespace Ecommerce.API.Controllers
             return Ok(orders);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var order = await _orderService.GetOrderByIdAsync(id);
+            if (order == null) return NotFound();
+            return Ok(order);
+        }
+
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
         {

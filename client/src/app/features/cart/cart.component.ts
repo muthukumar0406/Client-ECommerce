@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -219,6 +219,8 @@ export class CartComponent {
     email: ''
   };
 
+  private router = inject(Router);
+
   constructor(private cartService: CartService) { }
 
   updateQty(productId: number, change: number) {
@@ -261,9 +263,16 @@ export class CartComponent {
     this.orderService.createOrder(orderDto).subscribe({
       next: (res) => {
         this.isProcessing = false;
-        this.orderPlaced = true;
-        this.lastOrderId = res.orderNumber || '000';
+        // Don't clear cart yet? Or clear it? 
+        // Logic: Order created. If they navigate back, cart is empty?
+        // Usually, cart is cleared on successful PAYMENT. 
+        // But here we create order. If they abandon payment, order exists but unpaid.
+        // It's safer to clear cart here to avoid duplicate orders for same items.
+        // Or keep it until payment success. 
+        // Requirement "1. BUY NOW BUTTON - Navigates to /payment page".
+        // Let's clear Cart for now to follow standard flow where "Checkout" converts Cart to Order.
         this.cartService.clearCart();
+        this.router.navigate(['/payment', res.id]);
       },
       error: (err) => {
         console.error(err);
