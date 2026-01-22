@@ -7,7 +7,7 @@ namespace Ecommerce.Application.Interfaces
     public interface IOrderService
     {
         Task<OrderDto> CreateOrderAsync(CreateOrderDto createOrderDto);
-        Task<IEnumerable<OrderDto>> GetAllOrdersAsync();
+        Task<IEnumerable<OrderDto>> GetAllOrdersAsync(string? status = null);
         Task<OrderDto?> GetOrderByIdAsync(int id);
         Task UpdateOrderStatusAsync(int orderId, string status);
         Task DeleteOrderAsync(int id);

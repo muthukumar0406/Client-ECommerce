@@ -86,9 +86,14 @@ namespace Ecommerce.Application.Services
             };
         }
 
-        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
+        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync(string? status = null)
         {
             var orders = await _orderRepository.GetAllAsync(o => o.Address, o => o.OrderItems);
+            
+            if (!string.IsNullOrEmpty(status) && Enum.TryParse<OrderStatus>(status, true, out var orderStatus))
+            {
+                orders = orders.Where(o => o.Status == orderStatus);
+            }
             // We need to ensure Product is included in OrderItems for names
             // Since our generic repository might not support deep includes nested like o => o.OrderItems.Select(i => i.Product)
             // We'll fetch products separately or use a more advanced repository if needed.

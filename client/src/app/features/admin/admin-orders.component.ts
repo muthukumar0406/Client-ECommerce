@@ -11,8 +11,8 @@ import { OrderService, Order } from '../../core/services/order.service';
         <div>
             <h2>Order Management</h2>
             <div class="tabs">
-                <button [class.active]="activeTab() === 'all'" (click)="activeTab.set('all')">Active</button>
-                <button [class.active]="activeTab() === 'completed'" (click)="activeTab.set('completed')">Completed</button>
+                <button [class.active]="activeTab() === 'active'" (click)="activeTab.set('active')">Active Orders</button>
+                <button [class.active]="activeTab() === 'completed'" (click)="activeTab.set('completed')">Completed Orders</button>
             </div>
         </div>
         <button class="btn btn-outline" (click)="loadOrders()">
@@ -282,13 +282,15 @@ import { OrderService, Order } from '../../core/services/order.service';
 })
 export class AdminOrdersComponent implements OnInit {
     orders = signal<Order[]>([]);
-    activeTab = signal<'all' | 'completed'>('all');
+    activeTab = signal<'active' | 'completed'>('active');
     expandedOrderId = signal<number | null>(null);
 
     filteredOrders = computed(() => {
         const currentTab = this.activeTab();
-        if (currentTab === 'all') {
-            return this.orders();
+        if (currentTab === 'active') {
+            // "Active" means not Completed and not Cancelled (though Cancelled might want to be seen somewhere else, 
+            // for now excluding Completed as requested)
+            return this.orders().filter((o: Order) => o.status !== 'Completed');
         } else {
             return this.orders().filter((o: Order) => o.status === 'Completed');
         }

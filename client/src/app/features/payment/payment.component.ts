@@ -235,7 +235,7 @@ export class PaymentComponent implements OnInit {
             key: this.razorpayKeyId,
             amount: (this.order!.finalAmount * 100).toString(),
             currency: "INR",
-            name: "JK Mart",
+            name: "MK Demo",
             description: "Order #" + this.order!.orderNumber,
             order_id: razorpayOrderId,
             prefill: {
