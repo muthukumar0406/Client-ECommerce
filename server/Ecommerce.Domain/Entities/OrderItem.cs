@@ -9,7 +9,7 @@ namespace Ecommerce.Domain.Entities
         public virtual Product Product { get; set; } = null!;
         
         public int Quantity { get; set; }
-        public string QuantityUnit { get; set; } = string.Empty;
+        public string? QuantityUnit { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
     }
