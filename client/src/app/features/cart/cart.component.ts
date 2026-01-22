@@ -30,7 +30,7 @@ import { FormsModule } from '@angular/forms';
           <i class="fas fa-shopping-basket"></i>
           <h3>Your bag is empty</h3>
           <p>Looks like you haven't added anything to your cart yet.</p>
-          <a routerLink="/products" class="btn btn-primary">Start Shopping</a>
+          <a routerLink="/" class="btn btn-primary">Start Shopping</a>
         </div>
       } @else {
         <div class="cart-layout">

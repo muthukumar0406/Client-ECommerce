@@ -35,10 +35,11 @@ import { FormsModule } from '@angular/forms';
       <section class="search-section container">
          <div class="search-bar glass-panel">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" 
+            <input #searchInput
+                   type="text" 
                    placeholder="Search items..." 
-                   [(ngModel)]="searchQuery" 
-                   (ngModelChange)="filterProducts()">
+                   [value]="searchQuery()"
+                   (input)="searchQuery.set(searchInput.value)">
          </div>
       </section>
 
@@ -276,7 +277,7 @@ export class HomeComponent implements OnInit {
   categories = signal<Category[]>([]);
 
   selectedCategory = signal<string>('All');
-  searchQuery = '';
+  searchQuery = signal<string>('');
 
   cartTotalItems = this.cartService.totalItems;
   cartTotalPrice = this.cartService.totalPrice;
@@ -284,13 +285,9 @@ export class HomeComponent implements OnInit {
   filteredProducts = computed(() => {
     let items = this.products();
     const cat = this.selectedCategory();
-    const query = this.searchQuery.toLowerCase();
+    const query = this.searchQuery().toLowerCase();
 
     if (cat !== 'All') {
-      // Assuming Product has category text or we match by ID. 
-      // In a real app we might map ID. For now let's hope logic matches or I will fix it.
-      // Wait, Product has categoryId. Service returns Categories with ID and Name.
-      // I should map properly.
       const catObj = this.categories().find(c => c.name === cat);
       if (catObj) {
         items = items.filter(p => p.categoryId === catObj.id);
@@ -298,7 +295,7 @@ export class HomeComponent implements OnInit {
     }
 
     if (query) {
-      items = items.filter(p => p.name.toLowerCase().includes(query));
+      items = items.filter(p => (p.name || '').toLowerCase().includes(query));
     }
 
     return items;
