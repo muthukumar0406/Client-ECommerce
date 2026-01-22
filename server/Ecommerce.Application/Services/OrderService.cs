@@ -103,7 +103,6 @@ namespace Ecommerce.Application.Services
                 CustomerPhone = o.CustomerPhone,
                 CustomerEmail = o.CustomerEmail,
                 FinalAmount = o.FinalAmount,
-                FinalAmount = o.FinalAmount,
                 Status = o.Status.ToString(),
                 PaymentMode = o.PaymentMode,
                 PaymentStatus = o.PaymentStatus,
