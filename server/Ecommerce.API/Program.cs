@@ -80,6 +80,26 @@ using (var scope = app.Services.CreateScope())
                 ");
             } catch (Exception ex) { logger.LogError(ex, "Failed to update Orders table schema"); }
 
+            // 1b. Update Products Table for QuantityUnit
+            try {
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Products' AND COLUMN_NAME = 'QuantityUnit')
+                    BEGIN
+                        ALTER TABLE Products ADD QuantityUnit nvarchar(max) NULL;
+                    END
+                ");
+            } catch (Exception ex) { logger.LogError(ex, "Failed to update Products table for QuantityUnit"); }
+
+            // 1c. Update OrderItems Table for QuantityUnit
+            try {
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'OrderItems' AND COLUMN_NAME = 'QuantityUnit')
+                    BEGIN
+                        ALTER TABLE OrderItems ADD QuantityUnit nvarchar(max) NULL;
+                    END
+                ");
+            } catch (Exception ex) { logger.LogError(ex, "Failed to update OrderItems table for QuantityUnit"); }
+
             // 2. Create Payments Table
             try {
                 context.Database.ExecuteSqlRaw(@"

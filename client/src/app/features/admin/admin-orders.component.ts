@@ -91,6 +91,7 @@ import { OrderService, Order } from '../../core/services/order.service';
             </div>
         } @empty {
             <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
                 <p>No orders found in this section.</p>
             </div>
         }
@@ -107,106 +108,123 @@ import { OrderService, Order } from '../../core/services/order.service';
     .page-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 2rem;
+        align-items: center;
+        margin-bottom: 2.5rem;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
     
     .tabs {
         display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
+        background: #f1f5f9;
+        padding: 0.4rem;
+        border-radius: 12px;
+        gap: 0.5rem;
     }
     
     .tabs button {
-        padding: 0.5rem 1.5rem;
+        padding: 0.6rem 1.5rem;
         border: none;
-        background: none;
+        background: transparent;
         cursor: pointer;
-        border-bottom: 2px solid transparent;
-        font-weight: 600;
-        color: var(--text-muted);
-        transition: all 0.3s ease;
+        border-radius: 8px;
+        font-weight: 700;
+        color: #64748b;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
     }
     
     .tabs button.active {
         color: var(--primary-color);
-        border-bottom-color: var(--primary-color);
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .orders-list {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
-        margin-bottom: 5rem;
+        margin-bottom: 8rem;
     }
     
     .order-card {
-        padding: 1.5rem;
+        padding: 2rem;
         background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
+        transition: transform 0.3s ease;
     }
+    .order-card:hover { transform: translateY(-4px); }
     
     .order-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 1.2rem;
+        padding-bottom: 1.5rem;
         border-bottom: 1px solid #f1f5f9;
-        margin-bottom: 1.2rem;
+        margin-bottom: 1.5rem;
     }
-    .order-id { font-weight: 700; font-size: 1.1rem; color: var(--primary-color); display: block; }
-    .order-date { font-size: 0.85rem; color: var(--text-muted); }
+    .order-id { font-weight: 800; font-size: 1.2rem; color: var(--text-main); display: block; margin-bottom: 0.3rem; }
+    .order-date { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
     
     .status-badge {
-        padding: 0.4rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
+        padding: 0.6rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 800;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .status-badge.pending { background: #fff7ed; color: #c2410c; }
-    .status-badge.completed { background: #f0fdf4; color: #15803d; }
+    .status-badge.pending { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+    .status-badge.completed { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
     
     .customer-info-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 16px;
     }
     .info-item { display: flex; flex-direction: column; }
     .info-item.full { grid-column: 1 / -1; }
-    .info-item label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 0.2rem; }
-    .info-item span { font-weight: 500; }
+    .info-item label { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 1px; }
+    .info-item span { font-weight: 600; color: #334155; font-size: 1rem; }
     
-    .items-summary label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 0.5rem; }
+    .items-summary label { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; font-weight: 800; display: block; margin-bottom: 1rem; letter-spacing: 1px; }
     .items-table {
-        background: #f8fafc;
+        border: 1px solid #f1f5f9;
         border-radius: 12px;
         overflow: hidden;
     }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 0.8rem; font-size: 0.8rem; color: var(--text-muted); }
-    td { padding: 0.8rem; border-top: 1px solid #e2e8f0; font-size: 0.9rem; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th { text-align: left; padding: 1rem; font-size: 0.75rem; color: #64748b; background: #f8fafc; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 1.2rem 1rem; border-top: 1px solid #f1f5f9; font-size: 0.95rem; color: #334155; }
     
     .order-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 1.5rem;
-        padding-top: 1.2rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
         border-top: 1px solid #f1f5f9;
     }
     
     .order-total { display: flex; flex-direction: column; }
-    .total-label { font-size: 0.8rem; color: var(--text-muted); }
-    .total-amount { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
+    .total-label { font-size: 0.8rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+    .total-amount { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); }
     
-    .order-actions { display: flex; gap: 0.8rem; }
+    .order-actions { display: flex; gap: 1rem; }
     
-    .btn-success { background: #22c55e; color: white; border: none; }
-    .btn-danger { background: #ef4444; color: white; border: none; }
-    .btn-sm { padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; }
+    .btn-success { background: #22c55e; color: white; border: none; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); }
+    .btn-danger { background: #ef4444; color: white; border: none; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
+    .btn-outline { background: transparent; border: 1px solid #e2e8f0; color: #64748b; }
+    .btn-sm { padding: 0.7rem 1.5rem; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; font-weight: 700; transition: all 0.2s; }
+    .btn-sm:hover { transform: translateY(-2px); filter: brightness(1.05); }
     
     .grand-summary {
         position: fixed;
@@ -214,28 +232,36 @@ import { OrderService, Order } from '../../core/services/order.service';
         left: 50%;
         transform: translateX(-50%);
         width: 90%;
-        max-width: 600px;
-        padding: 1.5rem 2rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(var(--primary-rgb), 0.2);
+        max-width: 700px;
+        padding: 1.2rem 2.5rem;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 1000;
         border-radius: 100px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
     .summary-content { display: flex; justify-content: space-between; align-items: center; }
-    .grand-summary .label { font-weight: 600; color: var(--text-muted); }
-    .grand-summary .amount { font-size: 1.8rem; font-weight: 800; color: var(--primary-color); }
+    .grand-summary .label { font-weight: 600; color: #94a3b8; font-size: 0.95rem; }
+    .grand-summary .amount { font-size: 2.2rem; font-weight: 950; color: #60a5fa; letter-spacing: -1px; }
+    
+    @media (max-width: 900px) {
+        .customer-info-grid { grid-template-columns: 1fr 1fr; }
+    }
     
     @media (max-width: 600px) {
+        .page-header { flex-direction: column; align-items: stretch; gap: 1.5rem; }
         .customer-info-grid { grid-template-columns: 1fr; }
-        .order-footer { flex-direction: column; gap: 1rem; align-items: stretch; }
+        .order-footer { flex-direction: column; gap: 1.5rem; align-items: stretch; }
         .order-actions { justify-content: space-between; }
-        .tabs { overflow-x: auto; padding-bottom: 0.5rem; }
-        .tabs button { white-space: nowrap; }
+        .order-actions .btn-sm { flex: 1; justify-content: center; }
+        .grand-summary { border-radius: 20px; width: 95%; bottom: 1rem; }
+        .grand-summary .amount { font-size: 1.6rem; }
     }
 
-    .empty-state { text-align: center; padding: 4rem; color: var(--text-muted); }
+    .empty-state { text-align: center; padding: 6rem 2rem; color: #94a3b8; background: white; border-radius: 20px; }
+    .empty-state i { font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.2; }
+    .empty-state p { font-size: 1.2rem; font-weight: 600; }
   `]
 })
 export class AdminOrdersComponent implements OnInit {
