@@ -18,15 +18,7 @@ import { FormsModule } from '@angular/forms';
         <div class="company-card glass-panel animate-slide-up">
            <div class="company-main">
               <div class="company-logo">
-                 <svg viewBox="0 0 100 100" class="logo-svg">
-                    <circle cx="50" cy="50" r="48" fill="#ffffff" stroke="#2e7d32" stroke-width="2"/>
-                    <path d="M30,40 L70,40 L65,70 L35,70 Z" fill="#2e7d32" />
-                    <path d="M40,40 L40,30 Q40,20 50,20 Q60,20 60,30 L60,40" stroke="#2e7d32" stroke-width="4" fill="none" />
-                    <circle cx="45" cy="55" r="5" fill="#aed581" />
-                    <circle cx="55" cy="55" r="5" fill="#ff8a65" />
-                    <circle cx="50" cy="62" r="5" fill="#fb8c00" />
-                    <text x="50" y="88" font-family="'Outfit', sans-serif" font-size="12" text-anchor="middle" fill="#2e7d32" font-weight="bold">AGS MARKET</text>
-                 </svg>
+                 <img src="assets/Logo.jpeg" alt="AGS Super Market Logo" class="brand-img">
               </div>
               <div class="company-title">
                   <h1>AGS Super Market</h1>
@@ -171,39 +163,61 @@ import { FormsModule } from '@angular/forms';
         flex-direction: column;
         gap: 2rem;
         border-left: 6px solid #2e7d32;
+        text-align: center;
+        align-items: center;
     }
+    
     @media (min-width: 992px) {
-        .company-card { flex-direction: row; justify-content: space-between; align-items: stretch; }
+        .company-card { 
+            flex-direction: row; 
+            justify-content: space-between; 
+            align-items: stretch;
+            text-align: left;
+        }
         .company-main { border-right: 1px solid #e2e8f0; padding-right: 2rem; flex: 1; }
         .company-details { padding-left: 2rem; flex: 1.5; }
     }
     
-    .company-main { display: flex; gap: 1.5rem; align-items: center; }
+    .company-main { 
+        display: flex; 
+        flex-direction: column;
+        gap: 1.5rem; 
+        align-items: center; 
+    }
+    
+    @media (min-width: 992px) {
+        .company-main { flex-direction: row; }
+    }
+
     .company-logo {
         width: 100px; height: 100px;
         flex-shrink: 0;
-        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        border-radius: 12px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    .logo-svg { width: 100%; height: 100%; }
+    .brand-img { width: 100%; height: 100%; object-fit: contain; }
     
     .company-title h1 { margin: 0; font-size: 1.8rem; color: #1b5e20; }
     .company-title .category { margin: 0.2rem 0 0.8rem; color: #64748b; font-weight: 500; font-size: 1.1rem; }
-    .gstin-badge { 
-        display: inline-block;
-        background: #e8f5e9;
-        color: #2e7d32;
-        padding: 0.3rem 0.8rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
+    
+    .company-details { display: flex; flex-direction: column; gap: 1.5rem; justify-content: center; width: 100%; }
+    .detail-row { display: grid; grid-template-columns: 1fr; gap: 1.5rem; width: 100%; }
+    
+    @media (min-width: 600px) { .detail-row { grid-template-columns: 1fr 1fr; } }
+    
+    .detail-item { 
+        display: flex; 
+        flex-direction: column;
+        gap: 0.8rem; 
+        align-items: center; 
     }
     
-    .company-details { display: flex; flex-direction: column; gap: 1.5rem; justify-content: center; }
-    .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    @media (max-width: 600px) { .detail-row { grid-template-columns: 1fr; } }
-    
-    .detail-item { display: flex; gap: 1rem; align-items: flex-start; }
+    @media (min-width: 992px) {
+        .detail-item { flex-direction: row; align-items: flex-start; }
+    }
+
     .detail-item i { 
         width: 36px; height: 36px;
         background: #f1f8e9;
@@ -213,11 +227,20 @@ import { FormsModule } from '@angular/forms';
         flex-shrink: 0;
         font-size: 0.9rem;
     }
-    .detail-content { display: flex; flex-direction: column; }
+    .detail-content { display: flex; flex-direction: column; align-items: center; }
+    
+    @media (min-width: 992px) {
+        .detail-content { align-items: flex-start; }
+    }
+
     .detail-content .label { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 0.2rem; }
-    .detail-content a, .detail-content p { margin: 0; font-size: 1rem; font-weight: 600; color: #334155; text-decoration: none; }
+    .detail-content a, .detail-content p { margin: 0; font-size: 1rem; font-weight: 600; color: #334155; text-decoration: none; word-break: break-all; }
     .detail-content a:hover { color: #2e7d32; }
-    .detail-content .values { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .detail-content .values { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+    
+    @media (min-width: 992px) {
+        .detail-content .values { justify-content: flex-start; }
+    }
 
     /* Search Bar */
     .search-section { margin-top: 1.5rem; }
