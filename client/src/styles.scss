@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Modern Palette - Indigo/Violet theme */
-  --primary-color: #6366f1;
-  /* Indigo 500 */
-  --primary-hover: #4f46e5;
-  /* Indigo 600 */
-  --secondary-color: #8b5cf6;
-  /* Violet 500 */
-  --accent-color: #ec4899;
-  /* Pink 500 */
+  /* Professional Supermarket Palette - Green theme */
+  --primary-color: #2e7d32;
+  /* Green 700 */
+  --primary-hover: #1b5e20;
+  /* Green 900 */
+  --secondary-color: #43a047;
+  /* Green 600 */
+  --accent-color: #ffa000;
+  /* Amber 700 - for accents */
 
   --bg-color: #f8fafc;
   /* Slate 50 */
@@ -53,10 +53,10 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   background-image:
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(46, 125, 50, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(67, 160, 71, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 160, 0, 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
   background-attachment: fixed;
   min-height: 100vh;
 }

@@ -14,19 +14,54 @@ import { FormsModule } from '@angular/forms';
     <div class="home-container">
     
       <!-- 2. Company Info Section -->
-      <section class="company-info container">
-        <div class="info-card glass-panel">
-           <div class="brand-info">
-              <div class="brand-logo">MK</div>
-              <div class="brand-text">
-                  <h2>About MK Demo</h2>
-                  <p>Premium quality honey, nuts & dairy products</p>
+      <section class="company-header container">
+        <div class="company-card glass-panel animate-slide-up">
+           <div class="company-main">
+              <div class="company-logo">
+                 <svg viewBox="0 0 100 100" class="logo-svg">
+                    <circle cx="50" cy="50" r="48" fill="#ffffff" stroke="#2e7d32" stroke-width="2"/>
+                    <path d="M30,40 L70,40 L65,70 L35,70 Z" fill="#2e7d32" />
+                    <path d="M40,40 L40,30 Q40,20 50,20 Q60,20 60,30 L60,40" stroke="#2e7d32" stroke-width="4" fill="none" />
+                    <circle cx="45" cy="55" r="5" fill="#aed581" />
+                    <circle cx="55" cy="55" r="5" fill="#ff8a65" />
+                    <circle cx="50" cy="62" r="5" fill="#fb8c00" />
+                    <text x="50" y="88" font-family="'Outfit', sans-serif" font-size="12" text-anchor="middle" fill="#2e7d32" font-weight="bold">AGS MARKET</text>
+                 </svg>
+              </div>
+              <div class="company-title">
+                  <h1>AGS Super Market</h1>
+                  <p class="category">Grocery & Vegetables</p>
+                  <div class="gstin-badge">GSTIN: 33ACTPH1769C1ZM</div>
               </div>
            </div>
-           <div class="contact-info">
-              <div class="contact-item"><i class="fas fa-phone-alt"></i> <a href="tel:8925170985" style="color: inherit; text-decoration: none;">8925170985</a></div>
-              <div class="contact-item"><i class="fas fa-envelope"></i> <a href="mailto:muthukumarbsc0406&#64;gmail.com" style="color: inherit; text-decoration: none;">muthukumarbsc0406&#64;gmail.com</a></div>
-              <div class="contact-item"><i class="fas fa-map-marker-alt"></i> 123, Main Street, City</div>
+           
+           <div class="company-details">
+              <div class="detail-row">
+                 <div class="detail-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <div class="detail-content">
+                       <span class="label">Call Us</span>
+                       <div class="values">
+                          <a href="tel:9514331000">95143 31000</a>, 
+                          <a href="tel:9514531000">95145 31000</a>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="detail-item">
+                    <i class="fas fa-envelope"></i>
+                    <div class="detail-content">
+                       <span class="label">Email Address</span>
+                       <a href="mailto:haridass1000&#64;gmail.com">haridass1000&#64;gmail.com</a>
+                    </div>
+                 </div>
+              </div>
+              <div class="detail-item address">
+                 <i class="fas fa-map-marker-alt"></i>
+                 <div class="detail-content">
+                    <span class="label">Our Location</span>
+                    <p>6/6, Santham Colony, Anna Nagar West Extension, Chennai – 600101</p>
+                 </div>
+              </div>
            </div>
         </div>
       </section>
@@ -128,32 +163,61 @@ import { FormsModule } from '@angular/forms';
         border: 1px solid rgba(0,0,0,0.05);
     }
     
-    /* Company Info */
-    .company-info { margin-top: 1rem; }
-    .info-card {
-        padding: 1.5rem;
+    /* Company Header Styles */
+    .company-header { margin-top: 1.5rem; }
+    .company-card {
+        padding: 2rem;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 2rem;
+        border-left: 6px solid #2e7d32;
     }
-    @media (min-width: 768px) {
-        .info-card { flex-direction: row; justify-content: space-between; align-items: center; }
+    @media (min-width: 992px) {
+        .company-card { flex-direction: row; justify-content: space-between; align-items: stretch; }
+        .company-main { border-right: 1px solid #e2e8f0; padding-right: 2rem; flex: 1; }
+        .company-details { padding-left: 2rem; flex: 1.5; }
     }
     
-    .brand-info { display: flex; gap: 1rem; align-items: center; }
-    .brand-logo {
-        width: 60px; height: 60px;
-        background: var(--primary-color);
-        color: white;
+    .company-main { display: flex; gap: 1.5rem; align-items: center; }
+    .company-logo {
+        width: 100px; height: 100px;
+        flex-shrink: 0;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+    .logo-svg { width: 100%; height: 100%; }
+    
+    .company-title h1 { margin: 0; font-size: 1.8rem; color: #1b5e20; }
+    .company-title .category { margin: 0.2rem 0 0.8rem; color: #64748b; font-weight: 500; font-size: 1.1rem; }
+    .gstin-badge { 
+        display: inline-block;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 0.3rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    
+    .company-details { display: flex; flex-direction: column; gap: 1.5rem; justify-content: center; }
+    .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 600px) { .detail-row { grid-template-columns: 1fr; } }
+    
+    .detail-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .detail-item i { 
+        width: 36px; height: 36px;
+        background: #f1f8e9;
+        color: #2e7d32;
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        font-weight: bold; font-size: 1.2rem;
+        flex-shrink: 0;
+        font-size: 0.9rem;
     }
-    .brand-text h2 { margin: 0; font-size: 1.2rem; }
-    .brand-text p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
-    
-    .contact-info { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
-    .contact-item i { width: 20px; color: var(--primary-color); }
+    .detail-content { display: flex; flex-direction: column; }
+    .detail-content .label { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 0.2rem; }
+    .detail-content a, .detail-content p { margin: 0; font-size: 1rem; font-weight: 600; color: #334155; text-decoration: none; }
+    .detail-content a:hover { color: #2e7d32; }
+    .detail-content .values { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
     /* Search Bar */
     .search-section { margin-top: 1.5rem; }
