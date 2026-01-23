@@ -13,7 +13,7 @@ import { CartService } from '../services/cart.service';
         <!-- Logo + Site Name -->
         <a routerLink="/" class="logo">
           <!-- Small logo placeholder or text -->
-          <span class="logo-text">MK <span class="highlight">Demo</span></span>
+          <span class="logo-text">AGS <span class="highlight">Super Market</span></span>
         </a>
 
         <!-- Right: Admin Login -->

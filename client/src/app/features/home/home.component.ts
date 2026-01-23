@@ -23,35 +23,38 @@ import { FormsModule } from '@angular/forms';
               <div class="company-title">
                   <h1>AGS Super Market</h1>
                   <p class="category">Grocery & Vegetables</p>
-                  <div class="gstin-badge">GSTIN: 33ACTPH1769C1ZM</div>
+                  <div class="gstin-row">
+                     <span class="gstin-badge">GSTIN: 33ACTPH1769C1ZM</span>
+                  </div>
               </div>
            </div>
            
            <div class="company-details">
               <div class="detail-row">
                  <div class="detail-item">
-                    <i class="fas fa-phone-alt"></i>
+                    <div class="icon-box"><i class="fas fa-phone-alt"></i></div>
                     <div class="detail-content">
-                       <span class="label">Call Us</span>
-                       <div class="values">
-                          <a href="tel:9514331000">95143 31000</a>, 
-                          <a href="tel:9514531000">95145 31000</a>
+                       <span class="label">Call to Order</span>
+                       <div class="contact-links">
+                          <a href="tel:9514331000" class="touch-link">95143 31000</a>
+                          <span class="separator">|</span>
+                          <a href="tel:9514531000" class="touch-link">95145 31000</a>
                        </div>
                     </div>
                  </div>
                  <div class="detail-item">
-                    <i class="fas fa-envelope"></i>
+                    <div class="icon-box"><i class="fas fa-envelope"></i></div>
                     <div class="detail-content">
                        <span class="label">Email Address</span>
-                       <a href="mailto:haridass1000&#64;gmail.com">haridass1000&#64;gmail.com</a>
+                       <a href="mailto:haridass1000&#64;gmail.com" class="touch-link">haridass1000&#64;gmail.com</a>
                     </div>
                  </div>
               </div>
               <div class="detail-item address">
-                 <i class="fas fa-map-marker-alt"></i>
+                 <div class="icon-box"><i class="fas fa-map-marker-alt"></i></div>
                  <div class="detail-content">
-                    <span class="label">Our Location</span>
-                    <p>6/6, Santham Colony, Anna Nagar West Extension, Chennai – 600101</p>
+                    <span class="label">Store Location</span>
+                    <p class="address-text">6/6, Santham Colony, Anna Nagar West Extension, Chennai – 600101</p>
                  </div>
               </div>
            </div>
@@ -156,9 +159,9 @@ import { FormsModule } from '@angular/forms';
     }
     
     /* Company Header Styles */
-    .company-header { margin-top: 1.5rem; }
+    .company-header { margin-top: 1.5rem; padding: 0 1rem; }
     .company-card {
-        padding: 2rem;
+        padding: 1.5rem;
         display: flex;
         flex-direction: column;
         gap: 2rem;
@@ -168,14 +171,16 @@ import { FormsModule } from '@angular/forms';
     }
     
     @media (min-width: 992px) {
+        .company-header { padding: 0; }
         .company-card { 
+            padding: 2.5rem;
             flex-direction: row; 
             justify-content: space-between; 
             align-items: stretch;
             text-align: left;
         }
-        .company-main { border-right: 1px solid #e2e8f0; padding-right: 2rem; flex: 1; }
-        .company-details { padding-left: 2rem; flex: 1.5; }
+        .company-main { border-right: 1px solid #e2e8f0; padding-right: 2.5rem; flex: 1; }
+        .company-details { padding-left: 2.5rem; flex: 1.5; }
     }
     
     .company-main { 
@@ -190,57 +195,108 @@ import { FormsModule } from '@angular/forms';
     }
 
     .company-logo {
-        width: 100px; height: 100px;
+        width: 90px; height: 90px;
         flex-shrink: 0;
-        border-radius: 12px;
+        border-radius: 16px;
         overflow: hidden;
         background: white;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        padding: 5px;
     }
+    @media (min-width: 992px) { .company-logo { width: 110px; height: 110px; } }
     .brand-img { width: 100%; height: 100%; object-fit: contain; }
     
-    .company-title h1 { margin: 0; font-size: 1.8rem; color: #1b5e20; }
-    .company-title .category { margin: 0.2rem 0 0.8rem; color: #64748b; font-weight: 500; font-size: 1.1rem; }
+    .company-title h1 { margin: 0; font-size: 1.6rem; color: #1b5e20; letter-spacing: -0.5px; line-height: 1.1; }
+    .company-title .category { margin: 0.4rem 0 0.8rem; color: #64748b; font-weight: 500; font-size: 1rem; }
     
-    .company-details { display: flex; flex-direction: column; gap: 1.5rem; justify-content: center; width: 100%; }
-    .detail-row { display: grid; grid-template-columns: 1fr; gap: 1.5rem; width: 100%; }
+    @media (min-width: 992px) {
+        .company-title h1 { font-size: 2.2rem; }
+        .company-title .category { font-size: 1.2rem; }
+    }
+
+    .gstin-row { display: flex; justify-content: center; }
+    @media (min-width: 992px) { .gstin-row { justify-content: flex-start; } }
+    .gstin-badge { 
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 0.4rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: inline-block;
+    }
     
-    @media (min-width: 600px) { .detail-row { grid-template-columns: 1fr 1fr; } }
+    .company-details { display: flex; flex-direction: column; gap: 1.8rem; justify-content: center; width: 100%; }
+    .detail-row { display: grid; grid-template-columns: 1fr; gap: 1.8rem; width: 100%; }
+    
+    @media (min-width: 768px) { .detail-row { grid-template-columns: 1fr 1fr; } }
     
     .detail-item { 
         display: flex; 
         flex-direction: column;
-        gap: 0.8rem; 
+        gap: 1rem; 
         align-items: center; 
     }
     
     @media (min-width: 992px) {
-        .detail-item { flex-direction: row; align-items: flex-start; }
+        .detail-item { flex-direction: row; align-items: flex-start; text-align: left; }
     }
 
-    .detail-item i { 
-        width: 36px; height: 36px;
+    .icon-box { 
+        width: 44px; height: 44px;
         background: #f1f8e9;
         color: #2e7d32;
-        border-radius: 50%;
+        border-radius: 12px;
         display: flex; align-items: center; justify-content: center;
         flex-shrink: 0;
-        font-size: 0.9rem;
+        font-size: 1.1rem;
+        transition: transform 0.2s;
     }
-    .detail-content { display: flex; flex-direction: column; align-items: center; }
+    .detail-item:hover .icon-box { transform: scale(1.1); }
+
+    .detail-content { display: flex; flex-direction: column; align-items: center; width: 100%; }
     
     @media (min-width: 992px) {
         .detail-content { align-items: flex-start; }
     }
 
-    .detail-content .label { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 0.2rem; }
-    .detail-content a, .detail-content p { margin: 0; font-size: 1rem; font-weight: 600; color: #334155; text-decoration: none; word-break: break-all; }
-    .detail-content a:hover { color: #2e7d32; }
-    .detail-content .values { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
-    
-    @media (min-width: 992px) {
-        .detail-content .values { justify-content: flex-start; }
+    .detail-content .label { 
+        font-size: 0.7rem; 
+        text-transform: uppercase; 
+        color: #94a3b8; 
+        font-weight: 800; 
+        margin-bottom: 0.4rem; 
+        letter-spacing: 1px;
     }
+    
+    .touch-link { 
+        font-size: 1.05rem; 
+        font-weight: 700; 
+        color: #334155; 
+        text-decoration: none; 
+        padding: 0.5rem 0.2rem;
+        transition: color 0.2s;
+        display: inline-block;
+    }
+    .touch-link:active { background: rgba(46, 125, 50, 0.05); border-radius: 4px; }
+    .touch-link:hover { color: #2e7d32; }
+
+    .contact-links { display: flex; align-items: center; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    @media (min-width: 992px) { .contact-links { justify-content: flex-start; } }
+    
+    .separator { color: #cbd5e1; font-weight: 300; }
+    
+    .address-text { 
+        margin: 0; 
+        padding-top: 0.2rem;
+        font-size: 0.95rem; 
+        font-weight: 600; 
+        color: #475569; 
+        line-height: 1.5; 
+        max-width: 320px;
+    }
+    @media (min-width: 992px) { .address-text { max-width: none; } }
 
     /* Search Bar */
     .search-section { margin-top: 1.5rem; }
