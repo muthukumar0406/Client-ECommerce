@@ -12,8 +12,8 @@ import { CartService } from '../services/cart.service';
       <div class="container navbar-content">
         <!-- Logo + Site Name -->
         <a routerLink="/" class="logo">
-          <!-- Small logo placeholder or text -->
-          <span class="logo-text">AGS <span class="highlight">Super Market</span></span>
+          <span class="logo-desktop">AGS <span class="highlight">Super Market</span></span>
+          <span class="logo-mobile">AGS</span>
         </a>
 
         <!-- Right: Admin Login -->
@@ -53,6 +53,14 @@ import { CartService } from '../services/cart.service';
       display: flex;
       align-items: center;
       gap: 0.5rem;
+    }
+
+    .logo-desktop { display: none; }
+    .logo-mobile { display: block; }
+
+    @media (min-width: 992px) {
+      .logo-desktop { display: block; }
+      .logo-mobile { display: none; }
     }
 
     .highlight {

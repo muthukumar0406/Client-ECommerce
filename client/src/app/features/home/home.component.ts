@@ -166,8 +166,6 @@ import { FormsModule } from '@angular/forms';
         flex-direction: column;
         gap: 2rem;
         border-left: 6px solid #2e7d32;
-        text-align: center;
-        align-items: center;
     }
     
     @media (min-width: 992px) {
@@ -179,7 +177,7 @@ import { FormsModule } from '@angular/forms';
             align-items: stretch;
             text-align: left;
         }
-        .company-main { border-right: 1px solid #e2e8f0; padding-right: 2.5rem; flex: 1; }
+        .company-main { border-right: 1px solid #e2e8f0; padding-right: 2.5rem; flex: 1; text-align: left; }
         .company-details { padding-left: 2.5rem; flex: 1.5; }
     }
     
@@ -187,15 +185,16 @@ import { FormsModule } from '@angular/forms';
         display: flex; 
         flex-direction: column;
         gap: 1.5rem; 
-        align-items: center; 
+        align-items: center;
+        text-align: center;
     }
     
     @media (min-width: 992px) {
-        .company-main { flex-direction: row; }
+        .company-main { flex-direction: row; align-items: center; text-align: left; }
     }
 
     .company-logo {
-        width: 90px; height: 90px;
+        width: 100px; height: 100px;
         flex-shrink: 0;
         border-radius: 16px;
         overflow: hidden;
@@ -234,69 +233,54 @@ import { FormsModule } from '@angular/forms';
     
     .detail-item { 
         display: flex; 
-        flex-direction: column;
+        flex-direction: row;
         gap: 1rem; 
-        align-items: center; 
-    }
-    
-    @media (min-width: 992px) {
-        .detail-item { flex-direction: row; align-items: flex-start; text-align: left; }
+        align-items: flex-start;
+        text-align: left;
     }
 
     .icon-box { 
-        width: 44px; height: 44px;
+        width: 40px; height: 40px;
         background: #f1f8e9;
         color: #2e7d32;
-        border-radius: 12px;
+        border-radius: 10px;
         display: flex; align-items: center; justify-content: center;
         flex-shrink: 0;
-        font-size: 1.1rem;
-        transition: transform 0.2s;
+        font-size: 1rem;
     }
-    .detail-item:hover .icon-box { transform: scale(1.1); }
 
-    .detail-content { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .detail-content { display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
     
-    @media (min-width: 992px) {
-        .detail-content { align-items: flex-start; }
-    }
-
     .detail-content .label { 
         font-size: 0.7rem; 
         text-transform: uppercase; 
         color: #94a3b8; 
         font-weight: 800; 
-        margin-bottom: 0.4rem; 
+        margin-bottom: 0.2rem; 
         letter-spacing: 1px;
     }
     
     .touch-link { 
-        font-size: 1.05rem; 
+        font-size: 1rem; 
         font-weight: 700; 
         color: #334155; 
         text-decoration: none; 
-        padding: 0.5rem 0.2rem;
-        transition: color 0.2s;
+        padding: 0.2rem 0;
         display: inline-block;
     }
-    .touch-link:active { background: rgba(46, 125, 50, 0.05); border-radius: 4px; }
     .touch-link:hover { color: #2e7d32; }
 
-    .contact-links { display: flex; align-items: center; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
-    @media (min-width: 992px) { .contact-links { justify-content: flex-start; } }
+    .contact-links { display: flex; align-items: center; gap: 0.6rem; justify-content: flex-start; flex-wrap: wrap; }
     
     .separator { color: #cbd5e1; font-weight: 300; }
     
     .address-text { 
         margin: 0; 
-        padding-top: 0.2rem;
         font-size: 0.95rem; 
         font-weight: 600; 
         color: #475569; 
-        line-height: 1.5; 
-        max-width: 320px;
+        line-height: 1.5;
     }
-    @media (min-width: 992px) { .address-text { max-width: none; } }
 
     /* Search Bar */
     .search-section { margin-top: 1.5rem; }
