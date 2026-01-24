@@ -1,4 +1,4 @@
-# JK Mart - Enterprise E-Commerce Platform
+# AGS Super Market E-Commerce Platform
 
 A production-ready e-commerce platform built with .NET 8, Clean Architecture, and Angular 18.
 
